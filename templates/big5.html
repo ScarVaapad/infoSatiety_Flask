@@ -1,0 +1,136 @@
+<html>
+<head>
+  <title>Experimental Study</title>
+  <link rel="shortcut icon" href="asset/favicon.ico">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link href="./index.css" rel="stylesheet">
+</head>
+<body>
+<div class="container vh-100">
+  <div class="row" style="height: 7%;"></div>
+  <div class="row">
+    <div class="col"></div>
+    <div class="col-10 h-75" style="background-color: #eee; border-radius: 20px">
+      <div class="d-flex justify-content-center" style="padding-top: 20px;">
+        <h3>Personality Test</h3>
+      </div>
+      <div class="custom-row"></div>
+      <div class="custom-row" style="height: 7%;">
+        <p>How well do the following statements describe your personality?</p>
+      </div>
+      <div class="justify-content-center" style="padding-left: 10px; padding-bottom: 10px;">
+        <form id="my-form">
+
+          <table class="table">
+            <thead>
+            <tr>
+              <th>I see myself as someone who...</th>
+              <th>Disagree strongly</th>
+              <th>Disagree a little</th>
+              <th>Neither agree nor disagree</th>
+              <th>Agree a little</th>
+              <th>Agree strongly</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>is reserved</td>
+              <td><input type="radio" class="big5_radio" name="1" value="1"></td>
+              <td><input type="radio" class="big5_radio" name="1" value="2"></td>
+              <td><input type="radio" class="big5_radio" name="1" value="3"></td>
+              <td><input type="radio" class="big5_radio" name="1" value="4"></td>
+              <td><input type="radio" class="big5_radio" name="1" value="5"></td>
+            </tr>
+            <tr>
+              <td>is generally trusting</td>
+              <td><input type="radio" class="big5_radio" name="2" value="1"></td>
+              <td><input type="radio" class="big5_radio" name="2" value="2"></td>
+              <td><input type="radio" class="big5_radio" name="2" value="3"></td>
+              <td><input type="radio" class="big5_radio" name="2" value="4"></td>
+              <td><input type="radio" class="big5_radio" name="2" value="5"></td>
+            </tr>
+            <tr>
+              <td>tends to be lazy</td>
+              <td><input type="radio" class="big5_radio" name="3" value="1"></td>
+              <td><input type="radio" class="big5_radio" name="3" value="2"></td>
+              <td><input type="radio" class="big5_radio" name="3" value="3"></td>
+              <td><input type="radio" class="big5_radio" name="3" value="4"></td>
+              <td><input type="radio" class="big5_radio" name="3" value="5"></td>
+            </tr>
+            <tr>
+              <td>is relaxed, handles stress well</td>
+              <td><input type="radio" class="big5_radio" name="4" value="1"></td>
+              <td><input type="radio" class="big5_radio" name="4" value="2"></td>
+              <td><input type="radio" class="big5_radio" name="4" value="3"></td>
+              <td><input type="radio" class="big5_radio" name="4" value="4"></td>
+              <td><input type="radio" class="big5_radio" name="4" value="5"></td>
+            </tr>
+            <tr>
+              <td>has few artistic interests</td>
+              <td><input type="radio" class="big5_radio" name="5" value="1"></td>
+              <td><input type="radio" class="big5_radio" name="5" value="2"></td>
+              <td><input type="radio" class="big5_radio" name="5" value="3"></td>
+              <td><input type="radio" class="big5_radio" name="5" value="4"></td>
+              <td><input type="radio" class="big5_radio" name="5" value="5"></td>
+            </tr>
+            <tr>
+              <td>is outgoing, sociable</td>
+              <td><input type="radio" class="big5_radio" name="6" value="1"></td>
+              <td><input type="radio" class="big5_radio" name="6" value="2"></td>
+              <td><input type="radio" class="big5_radio" name="6" value="3"></td>
+              <td><input type="radio" class="big5_radio" name="6" value="4"></td>
+              <td><input type="radio" class="big5_radio" name="6" value="5"></td>
+            </tr>
+            <tr>
+              <td>tends to find fault with others</td>
+              <td><input type="radio" class="big5_radio" name="7" value="1"></td>
+              <td><input type="radio" class="big5_radio" name="7" value="2"></td>
+              <td><input type="radio" class="big5_radio" name="7" value="3"></td>
+              <td><input type="radio" class="big5_radio" name="7" value="4"></td>
+              <td><input type="radio" class="big5_radio" name="7" value="5"></td>
+            </tr>
+            <tr>
+              <td>does a thorough job</td>
+              <td><input type="radio" class="big5_radio" name="8" value="1"></td>
+              <td><input type="radio" class="big5_radio" name="8" value="2"></td>
+              <td><input type="radio" class="big5_radio" name="8" value="3"></td>
+              <td><input type="radio" class="big5_radio" name="8" value="4"></td>
+              <td><input type="radio" class="big5_radio" name="8" value="5"></td>
+            </tr>
+            <tr>
+              <td>gets nervous easily</td>
+              <td><input type="radio" class="big5_radio" name="9" value="1"></td>
+              <td><input type="radio" class="big5_radio" name="9" value="2"></td>
+              <td><input type="radio" class="big5_radio" name="9" value="3"></td>
+              <td><input type="radio" class="big5_radio" name="9" value="4"></td>
+              <td><input type="radio" class="big5_radio" name="9" value="5"></td>
+            </tr>
+            <tr>
+              <td>has an active imagination</td>
+              <td><input type="radio" class="big5_radio" name="10" value="1"></td>
+              <td><input type="radio" class="big5_radio" name="10" value="2"></td>
+              <td><input type="radio" class="big5_radio" name="10" value="3"></td>
+              <td><input type="radio" class="big5_radio" name="10" value="4"></td>
+              <td><input type="radio" class="big5_radio" name="10" value="5"></td>
+            </tr>
+            <!-- Add more rows as needed -->
+            </tbody>
+          </table>
+          <div class="d-flex justify-content-center" style="padding-top: 20px;">
+            <button type="submit" class="btn btn-primary" style="width: 35%;" id="start-sample-btn">Next</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="col"></div>
+  </div>
+  <div class="row" style="height: 7%;"></div>
+</div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="module" src='{{url_for('static',filename='big5.js')}}' ></script>
+
+</body>
+</html>

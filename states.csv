@@ -1,0 +1,52 @@
+state,life_expectancy,poverty_rate,region
+Alabama,75.4,22,South
+Alaska,78.3,21,Other
+Arizona,79.6,23,West
+Arkansas,76,22,South
+California,80.8,24,West
+Colorado,80,16,West
+Connecticut,80.8,14,Northeast
+Delaware,78.4,17,Northeast
+District of Columbia,76.5,25,South
+Florida,79.4,20,South
+Georgia,77.2,23,South
+Hawaii,81.3,24,Other
+Idaho,79.5,19,West
+Illinois,79,19,Midwest
+Indiana,77.6,20,Midwest
+Iowa,79.7,14,Midwest
+Kansas,78.7,17,Midwest
+Kentucky,76,22,South
+Louisiana,75.7,27,South
+Maine,79.2,16,Northeast
+Maryland,78.8,16,Northeast
+Massachusetts,80.5,15,Northeast
+Michigan,78.2,20,Midwest
+Minnesota,81.1,13,Midwest
+Mississippi,75,25,South
+Missouri,77.5,19,Midwest
+Montana,78.5,19,West
+Nebraska,79.8,14,Midwest
+Nevada,78.1,21,West
+New Hampshire,80.3,10,Northeast
+New Jersey,80.3,17,Northeast
+New Mexico,78.4,27,West
+New York,80.5,22,Northeast
+North Carolina,77.8,21,South
+North Dakota,79.5,14,Midwest
+Ohio,77.8,20,Midwest
+Oklahoma,75.9,19,South
+Oregon,79.5,19,West
+Pennsylvania,78.5,17,Northeast
+Rhode Island,79.9,18,Northeast
+South Carolina,77,24,South
+South Dakota,79.5,17,Midwest
+Tennessee,76.3,21,South
+Texas,78.5,23,South
+Utah,80.2,16,West
+Vermont,80.5,14,Northeast
+Virginia,79,16,South
+Washington,79.9,16,West
+West Virginia,75.4,21,South
+Wisconsin,80,15,Midwest
+Wyoming,78.3,14,West
