@@ -497,11 +497,11 @@ $("#next-btn").click(function(){
     localStorage.setItem("task_"+taskCnt.toString(), JSON.stringify(results));
     //and if count is 3, submitting will result into the next page
     if (parseInt(taskCnt) == samples.length){
-        window.location.href = "post_task.html";
+        window.location.href = "post_task";
     }else{
         taskCnt=parseInt(taskCnt)+1;
         permutationCnt = parseInt(permutationCnt)+1;
-        let address = "task.html?taskCnt="+taskCnt.toString()+"&permutationcnt="+permutationCnt.toString();
+        let address = "task?taskCnt="+taskCnt.toString()+"&permutationcnt="+permutationCnt.toString();
         window.location.href = address;
     }
 });

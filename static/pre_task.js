@@ -1,6 +1,6 @@
 
 $( "#start-button" ).click(function() {
-    window.location.href = "task.html?taskCnt=1&permutationcnt=1";
+    window.location.href = "task?taskCnt=1&permutationcnt=1";
 });
 
 

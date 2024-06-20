@@ -61,7 +61,7 @@ function task_finish_handler(){
     localStorage.setItem('minivlat_score', user_minivlat_score);
 
     if(vlatCnt == vlat_files.length){
-        window.location.href = "task_description";
+        window.location.href = "task_desc";
     }
     else{
         window.location.href = "MiniVlat?vlat_cnt="+(parseInt(vlatCnt)+1).toString();
@@ -85,14 +85,13 @@ $(document).ready(function () {
     }
 
     let _cnt = parseInt(vlatCnt)-1;
-    vis_file = dir+vlat_files[_cnt];
-    let imgSrc = "{{url_for('static', filename='"+vis_file+"')}}";
-    console.log(imgSrc);
+    vis_file = imageUrl+vlat_files[_cnt];
+
     vis_question = questions[_cnt];
     vis_choices = answers[_cnt];
     vis_correct_answer = correct_answers[_cnt];
 
-    let img = $("<img />").attr('src', imgSrc).attr('width', '560px').attr('height', '500px').attr('id', 'vlat-img');
+    let img = $("<img />").attr('src', vis_file).attr('width', '560px').attr('height', '500px').attr('id', 'vlat-img');
     $("#vlat-div").append(img);
     $("#question-div").text(vis_question);
 

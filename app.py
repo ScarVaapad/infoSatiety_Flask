@@ -32,19 +32,17 @@ def pre_miniVlat():
 @app.route("/MiniVlat")
 def miniVlat():
     vlatCnt = request.args.get('vlat_cnt')
-    return render_template('/MiniVlat.html',vlat_cnt = vlatCnt)
+    return render_template('/MiniVlat.html',vlat_cnt=vlatCnt)
 
 @app.route("/task_desc")
 def task_desc():
-    task_cnt = request.args.get('task_cnt')
-    permutation = request.args.get('permutation')
-    return render_template('/task_description.html',task_cnt)
+    return render_template('/task_description.html')
 
 @app.route("/sample")
 def sample():
     samplecnt = request.args.get('samplecnt')
-    permutation = request.args.get('permutation')
-    return render_template('/sample.html',samplecnt = samplecnt,permutation=permutation)
+    permutationcnt = request.args.get('permutationcnt')
+    return render_template('/sample.html',samplecnt=samplecnt, permutationcnt=permutationcnt)
 
 @app.route("/pre_task")
 def pre_task():
@@ -52,7 +50,9 @@ def pre_task():
 
 @app.route("/task")
 def task():
-    return render_template('/task.html')
+    task_cnt = request.args.get('task_cnt')
+    permutation = request.args.get('permutation')
+    return render_template('/task_description.html', task_cnt=task_cnt,permutation=permutation)
 
 @app.route("/post_task")
 def post_task():
