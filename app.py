@@ -50,9 +50,9 @@ def pre_task():
 
 @app.route("/task")
 def task():
-    task_cnt = request.args.get('task_cnt')
-    permutation = request.args.get('permutation')
-    return render_template('/task_description.html', task_cnt=task_cnt,permutation=permutation)
+    task_cnt = request.args.get('taskCnt')
+    permutationcnt = request.args.get('permutationcnt')
+    return render_template('/task.html', taskCnt=task_cnt,permutationcnt=permutationcnt)
 
 @app.route("/post_task")
 def post_task():
