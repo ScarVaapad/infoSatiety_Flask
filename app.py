@@ -1,6 +1,6 @@
 __author__ = 'David Gotz, gotz@unc.edu, Onyen = gotz'
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect
 from flask import url_for
 from markupsafe import escape
 
@@ -14,6 +14,13 @@ import json
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI']="postgresql://postgres:scar31251@localhost:5432/postgres"
 db = SQLAlchemy(app)
+
+class Data(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    data = db.Column(db.JSON)
+
+    def __init__(self,data):
+        self.data = data
 
 with app.app_context():
     try:
@@ -71,13 +78,18 @@ def task():
 def post_task():
     return render_template('/post_task.html')
 
-@app.route("/finish",methods=['GET','POST'])
+@app.route("/finish",methods=['POST'])
 def finish():
-    render_template('/finish.html')
+
     data = request.get_json()
     print(data)
 
-    return
+    new_data = Data(data)
+
+    db.session.add(new_data)
+    db.session.commit()
+
+    return redirect("/finish",code=302)
 
 
 
