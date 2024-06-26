@@ -12,7 +12,7 @@
 
     localStorage.setItem('Post_Task_Q', JSON.stringify(values));
 
-    let url = "/finish";
+    let url = "/submit";
     let data = JSON.stringify(localStorage)
 
     fetch(url,{

@@ -78,18 +78,22 @@ def task():
 def post_task():
     return render_template('/post_task.html')
 
-@app.route("/finish",methods=['POST'])
-def finish():
+@app.route("/submit",methods=['POST'])
+def submit():
 
     data = request.get_json()
     print(data)
 
     new_data = Data(data)
 
-    db.session.add(new_data)
-    db.session.commit()
+ #   db.session.add(new_data)
+#    db.session.commit()
 
     return redirect("/finish",code=302)
+
+@app.route("/finish")
+def finish():
+    return render_template('/finish.html')
 
 
 
