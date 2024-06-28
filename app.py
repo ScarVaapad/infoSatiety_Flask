@@ -7,28 +7,30 @@ from markupsafe import escape
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 import json
+import csv
 
 # Create a Flask web application server
 # __name__ is a "special" variable (notice the underscores) and its value is the name of the current module
 # (remember that imports pull in additional modules, like random). Flask uses this to configure itself.
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI']="postgresql://postgres:scar31251@localhost:5432/postgres"
-db = SQLAlchemy(app)
 
-class Data(db.Model):
-    id = db.Column(db.Integer,primary_key=True)
-    data = db.Column(db.JSON)
-
-    def __init__(self,data):
-        self.data = data
-
-with app.app_context():
-    try:
-        db.session.execute(text('SELECT 1'))
-        print('Connected to the database')
-    except Exception as e:
-        print('Failed to connect to the database')
-        print(e)
+# DB if necessary
+# app.config['SQLALCHEMY_DATABASE_URI']="postgresql://postgres:scar31251@localhost:5432/postgres"
+# db = SQLAlchemy(app)
+# class Data(db.Model):
+#     id = db.Column(db.Integer,primary_key=True)
+#     data = db.Column(db.JSON)
+#
+#     def __init__(self,data):
+#         self.data = data
+#
+# with app.app_context():
+#     try:
+#         db.session.execute(text('SELECT 1'))
+#         print('Connected to the database')
+#     except Exception as e:
+#         print('Failed to connect to the database')
+#         print(e)
 
 # Define the web pages.
 @app.route("/")
@@ -82,12 +84,12 @@ def post_task():
 def submit():
 
     data = request.get_json()
-    print(data)
+    with open('data.csv','a',newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(data.values())
 
-    new_data = Data(data)
-
- #   db.session.add(new_data)
-#    db.session.commit()
+#   db.session.add(new_data)
+#   db.session.commit()
 
     return redirect("/finish",code=302)
 
