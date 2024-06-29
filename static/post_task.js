@@ -22,8 +22,11 @@
       },
       body: data
     })
-    .then(response => response.text())
-    //.then(data => console.log(data))
+    .then(response => {
+      if(response.redirected){
+        window.location.href = response.url;
+      }
+    })
     .catch((error) => {
       console.error('Error',error);
     });
