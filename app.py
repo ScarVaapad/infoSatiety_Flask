@@ -84,12 +84,9 @@ def post_task():
 def submit():
 
     data = request.get_json()
-    with open('data.csv','a',newline='') as csvfile:
+    with open('data/data.csv','a',newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(data.values())
-
-#   db.session.add(new_data)
-#   db.session.commit()
 
     return redirect("/finish",code=302)
 
@@ -101,7 +98,7 @@ def finish():
 
 # Run the web server.
 def main():
-    app.run(port=3000)
+    app.run(host="0.0.0.0",port=3000)
 
 
 if __name__ == '__main__':
