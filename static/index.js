@@ -12,6 +12,6 @@ fetch("color_name_code.json")
 
 $( "#start-button" ).click(function() {
     localStorage.clear();//for each experiment, clear the local storage
-    window.location.href = "information"
+    window.location.href = "task_desc"
     // window.location.href = "information.html?task="+taskNum+"&cnt=0&color="+colorSelected;
 });

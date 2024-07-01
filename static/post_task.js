@@ -12,22 +12,6 @@
 
     localStorage.setItem('Post_Task_Q', JSON.stringify(values));
 
-    let url = "/submit";
-    let data = JSON.stringify(localStorage)
+    window.location.href = "information"
 
-    fetch(url,{
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: data
-    })
-    .then(response => {
-      if(response.redirected){
-        window.location.href = response.url;
-      }
-    })
-    .catch((error) => {
-      console.error('Error',error);
-    });
   });
