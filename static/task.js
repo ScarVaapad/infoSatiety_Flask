@@ -42,7 +42,6 @@ const margin = {top: 10, right: 30, bottom: 30, left: 60},
 const w = 400;
 const h = 400;
 
-let maxCatIndex;
 let taskNum, taskCnt, useShape, colorPalette, colors, prevValue, permutationCnt;
 let timeleft = 150;
 let alreadyClick = false;
@@ -414,6 +413,7 @@ function drawCILine(_d){
 
 //Button function to add more data to the scatterplot
 $("#add-more-btn").click(function(){
+    $("#notification").text("Once you believed you've seen enough, please click on \"Draw the Line\" to draw the trend")
     if(reward >=0){
         reward -=2
     }else{
@@ -427,11 +427,15 @@ $("#add-more-btn").click(function(){
 $("#draw-line-btn").click(function(){
 //user can only draw one line once, and adjust the end points
     //user line data stored as global variable: userLineData
+    $("#notification").text("Once you are satisfied your trend-line, please click \"I'm Done\" to proceed")
     userBehaviour.stop();
     userBehaviours["request-data"] = userBehaviour.showResult();
 
     $("#add-more-btn").prop('disabled', true).css('background-color', 'grey');
     svg.on("mousedown", function(event) {
+        $("#add-more-btn").hide();
+        $("#draw-line-btn").hide();
+        $("#submit-result-btn").show();
         isDrawing = true;
         let coords = d3.pointer(event);
         startPoint = {x: coords[0], y: coords[1]};
@@ -461,8 +465,7 @@ $("#draw-line-btn").click(function(){
 $("#submit-result-btn" ).click(function() {
     //Give answers to participants
     // first, show all data points on scatterplot
-    $("#add-more-btn").prop('disabled', true).css('background-color', 'gray');
-    $("#draw-line-btn").prop("disabled", true).css("background-color", "gray");
+
     svg.on("mousedown",null);
     svg.on("mousemove",null);
     svg.on("mouseup",null);
@@ -481,9 +484,28 @@ $("#submit-result-btn" ).click(function() {
     userBehaviour.showResult();
     userBehaviours["draw-line"] = userBehaviour.showResult();
 
-    let final_res = userScore(reward, userLineData, regLineData , visCentroid);
-    // alert("You have earned " + final_res + " points!");
+    let final_res = parseFloat(userScore(reward, userLineData, regLineData , visCentroid).toFixed(1));
+    let money = final_res*0.6/100
+    money = Number(money.toFixed(2))
+
+    // I set up the items in the previous page, pre_task.js, so it is initialized
+    let uScores = JSON.parse(localStorage.getItem("userScores"));
+    let fReward = JSON.parse(localStorage.getItem("finalReward"));
+    fReward = parseFloat(fReward);
+    uScores.push(final_res);
+    fReward +=money;
+    fReward = Number(fReward.toFixed(2))
+    localStorage.setItem("userScores",JSON.stringify(uScores));
+    localStorage.setItem("finalReward",JSON.stringify(fReward));
+
+    $("#notification").text("Hooray! You've got "+final_res+" points and now earned $"+fReward+" for all tasks! Now Click \"Next task\" to continue");
     console.log("User score: ", final_res);
+
+    if(parseInt(taskCnt) == samples.length) {
+        $("#notification").text("Hooray! You've earned altogether $" + fReward + " for all tasks! Now Click \"to questionnaires\" to continue");
+        $("#next-btn").text("To Questionnaires");
+    }
+
 });
 
 $("#next-btn").click(function(){
@@ -495,6 +517,7 @@ $("#next-btn").click(function(){
     results["userLineData"] = userLineData;
 
     localStorage.setItem("task_"+taskCnt.toString(), JSON.stringify(results));
+
     //and if count is 3, submitting will result into the next page
     if (parseInt(taskCnt) == samples.length){
         window.location.href = "post_task";
@@ -507,11 +530,11 @@ $("#next-btn").click(function(){
 });
 $(document).ready(function(){
     genChart();
-    $("#progresss-txt").text(taskCnt+"/8");
+    $("#progress-txt").text("You are at "+taskCnt+" of the 8 tasks");
     $("#slider-control").hide();//pause the slider as we don't use it in our tasks.
     $("#add-more-btn").show();
     $("#draw-line-btn").show();
-    $("#submit-result-btn").show();
+    $("#submit-result-btn").hide();
     $("#next-btn").hide();
     userBehaviour.config(
         {

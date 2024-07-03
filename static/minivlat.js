@@ -1,6 +1,6 @@
 let vlatCnt;
 
-let timeleft = 250;
+let timeleft = 25;
 let dir = "MiniVlat/";
 let vlat_files = [
     "TreeMap.png"
@@ -116,7 +116,7 @@ $(document).ready(function () {
         $("#choice-list").append("<li><input type='radio' name='vlat-choices' value='"+val+"'>"+val+"</li>");
     });
 
-    $("#progresss-txt").text((parseInt(vlatCnt)).toString()+"/"+vlat_files.length.toString());
+    $("#progress-txt").text("This is "+(parseInt(vlatCnt)).toString()+" of "+vlat_files.length.toString()+" visualization tests");
 });
 
 $("#next-btn").click(function() {
@@ -133,9 +133,9 @@ var downloadTimer = setInterval(function(){
         document.getElementById("countdown").innerHTML = "Time remaining: 0";
         task_finish_handler();
     } else {
-        document.getElementById("countdown").innerHTML = "Time remaining: " + timeleft/10 ;
+        document.getElementById("countdown").innerHTML = "Time remaining: " + timeleft ;
     }
     timeleft -= 1;
-}, 100);
+}, 1000);
 
 

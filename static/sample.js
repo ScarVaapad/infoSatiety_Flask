@@ -414,6 +414,7 @@ function drawCILine(_d){
 
 //Button function to add more data to the scatterplot
 $("#add-more-btn").click(function(){
+    $("#notification").text("Once you believed you've seen enough, please click on \"Draw the Line\" to draw the trend")
     if(reward >=0){
         reward -=2
     }else{
@@ -427,11 +428,15 @@ $("#add-more-btn").click(function(){
 $("#draw-line-btn").click(function(){
 //user can only draw one line once, and adjust the end points
     //user line data stored as global variable: userLineData
+    $("#notification").text("Once you are satisfied your trend-line, please click \"I'm Done\" to proceed")
     userBehaviour.stop();
     userBehaviours["request-data"] = userBehaviour.showResult();
 
     $("#add-more-btn").prop('disabled', true).css('background-color', 'grey');
     svg.on("mousedown", function(event) {
+        $("#add-more-btn").hide();
+        $("#draw-line-btn").hide();
+        $("#submit-result-btn").show();
         isDrawing = true;
         let coords = d3.pointer(event);
         startPoint = {x: coords[0], y: coords[1]};
@@ -461,8 +466,6 @@ $("#draw-line-btn").click(function(){
 $("#submit-result-btn" ).click(function() {
     //Give answers to participants
     // first, show all data points on scatterplot
-    $("#add-more-btn").prop('disabled', true).css('background-color', 'gray');
-    $("#draw-line-btn").prop("disabled", true).css("background-color", "gray");
     svg.on("mousedown",null);
     svg.on("mousemove",null);
     svg.on("mouseup",null);
@@ -472,6 +475,7 @@ $("#submit-result-btn" ).click(function() {
     // then, show the regression line of the scatterplot
     showLine(_d);
     // drawCILine(_d);
+
     $("#submit-result-btn").hide();
     $("#next-btn").show();
 
@@ -481,8 +485,8 @@ $("#submit-result-btn" ).click(function() {
     userBehaviour.showResult();
     userBehaviours["draw-line"] = userBehaviour.showResult();
 
-    let final_res = userScore(reward, userLineData, regLineData , visCentroid);
-    alert("You have earned " + final_res + " points!");
+    let final_res = userScore(reward, userLineData, regLineData , visCentroid).toFixed(1);
+    $("#notification").text("Hooray! You've got "+final_res+" points! Now Click \"Next practice\" to continue")
     console.log("User score: ", final_res);
 });
 
@@ -507,11 +511,11 @@ $("#next-btn").click(function(){
 });
 $(document).ready(function(){
     genChart();
-    $("#progresss-txt").text(sampleCnt+"/3");
+    $("#progress-txt").text("This is the "+sampleCnt+" of 3 practices");
     $("#slider-control").hide();//pause the slider as we don't use it in our tasks.
     $("#add-more-btn").show();
     $("#draw-line-btn").show();
-    $("#submit-result-btn").show();
+    $("#submit-result-btn").hide();
     $("#next-btn").hide();
     userBehaviour.config(
         {

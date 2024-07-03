@@ -6,8 +6,24 @@ from markupsafe import escape
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
+from time import sleep
 import json
 import csv
+import threading
+import os
+
+mountPath = 'data/data.csv'
+global_lock = threading.Lock()
+def safe_write_csv(json_data):
+    file_exists = os.path.isfile(mountPath)
+    with global_lock:
+        with open(mountPath,'a',newline='') as csvfile:
+            writer = csv.writer(csvfile)
+
+            if not file_exists:
+                writer.writerow(json_data.keys())
+
+            writer.writerow(json_data.values())
 
 # Create a Flask web application server
 # __name__ is a "special" variable (notice the underscores) and its value is the name of the current module
@@ -84,9 +100,8 @@ def post_task():
 def submit():
 
     data = request.get_json()
-    with open('data/data.csv','a',newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(data.values())
+
+    safe_write_csv(data) # defined above
 
     return redirect("/finish",code=302)
 

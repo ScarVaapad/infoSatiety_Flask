@@ -9,3 +9,6 @@
 .custom-row{
     margin: 20px 0;
 }
+.container {
+    max-width: 75%;
+}
