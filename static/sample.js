@@ -414,7 +414,7 @@ function drawCILine(_d){
 
 //Button function to add more data to the scatterplot
 $("#add-more-btn").click(function(){
-    $("#notification").text("Once you believed you've seen enough, please click on \"Draw the Line\" to draw the trend")
+    $("#notification").html("You can request more data by hitting \"Request more data\" button, points will be deducted upon request<br>Once you believed you've seen enough data, click on \"Draw the line\" to draw the trend")
     if(reward >=0){
         reward -=2
     }else{
@@ -428,7 +428,7 @@ $("#add-more-btn").click(function(){
 $("#draw-line-btn").click(function(){
 //user can only draw one line once, and adjust the end points
     //user line data stored as global variable: userLineData
-    $("#notification").text("Once you are satisfied your trend-line, please click \"I'm Done\" to proceed")
+    $("#notification").html("You can no longer request more data, but can draw as many times as you like <br>Once you are satisfied with your line, click \"Submit\" to proceed")
     userBehaviour.stop();
     userBehaviours["request-data"] = userBehaviour.showResult();
 
@@ -486,8 +486,13 @@ $("#submit-result-btn" ).click(function() {
     userBehaviours["draw-line"] = userBehaviour.showResult();
 
     let final_res = userScore(reward, userLineData, regLineData , visCentroid).toFixed(1);
-    $("#notification").text("Hooray! You've got "+final_res+" points! Now Click \"Next practice\" to continue")
+    $("#notification").html("Hooray! You've got "+final_res+" points! Now Click \"Next practice\" to continue <br><b>Important</b>: we present the whole dataset in practices only <br>In tasks, you won't see the data points and true trend-line")
     console.log("User score: ", final_res);
+
+    if(parseInt(sampleCnt) == samples.length) {
+        $("#notification").text("Hooray! You've got "+final_res+" points! Now Click \"To tasks\" to continue");
+        $("#next-btn").text("To tasks");
+    }
 });
 
 $("#next-btn").click(function(){
@@ -511,7 +516,7 @@ $("#next-btn").click(function(){
 });
 $(document).ready(function(){
     genChart();
-    $("#progress-txt").text("This is the "+sampleCnt+" of 3 practices");
+    $("#progress-txt").text("Practice "+sampleCnt+" out of 3");
     $("#slider-control").hide();//pause the slider as we don't use it in our tasks.
     $("#add-more-btn").show();
     $("#draw-line-btn").show();

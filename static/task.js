@@ -310,6 +310,7 @@ function showLine(_d){
         .datum(reg_line_data)
         .attr("fill", "none")
         .attr("stroke", "white")
+        .attr("stroke-opacity",0)
         .attr("stroke-width", 2.5)
         .attr("d", line)
         .attr("class","regLine");
@@ -413,7 +414,7 @@ function drawCILine(_d){
 
 //Button function to add more data to the scatterplot
 $("#add-more-btn").click(function(){
-    $("#notification").text("Once you believed you've seen enough, please click on \"Draw the Line\" to draw the trend")
+    $("#notification").text("Once you believed you've seen enough data, click on \"Draw the line\" to draw the trend")
     if(reward >=0){
         reward -=2
     }else{
@@ -427,7 +428,7 @@ $("#add-more-btn").click(function(){
 $("#draw-line-btn").click(function(){
 //user can only draw one line once, and adjust the end points
     //user line data stored as global variable: userLineData
-    $("#notification").text("Once you are satisfied your trend-line, please click \"I'm Done\" to proceed")
+    $("#notification").text("Once you are satisfied with your line, click \"Submit\" to proceed")
     userBehaviour.stop();
     userBehaviours["request-data"] = userBehaviour.showResult();
 
@@ -485,7 +486,7 @@ $("#submit-result-btn" ).click(function() {
     userBehaviours["draw-line"] = userBehaviour.showResult();
 
     let final_res = parseFloat(userScore(reward, userLineData, regLineData , visCentroid).toFixed(1));
-    let money = final_res*0.6/100
+    let money = final_res*0.6/100+0.3
     money = Number(money.toFixed(2))
 
     // I set up the items in the previous page, pre_task.js, so it is initialized
@@ -498,12 +499,12 @@ $("#submit-result-btn" ).click(function() {
     localStorage.setItem("userScores",JSON.stringify(uScores));
     localStorage.setItem("finalReward",JSON.stringify(fReward));
 
-    $("#notification").text("Hooray! You've got "+final_res+" points and now earned $"+fReward+" for all tasks! Now Click \"Next task\" to continue");
+    $("#notification").text("Hooray! You've got "+final_res+" points and earned $"+money+", currently $"+fReward+" for all tasks! Click \"Next task\" to continue");
     console.log("User score: ", final_res);
 
     if(parseInt(taskCnt) == samples.length) {
-        $("#notification").text("Hooray! You've earned altogether $" + fReward + " for all tasks! Now Click \"to questionnaires\" to continue");
-        $("#next-btn").text("To Questionnaires");
+        $("#notification").text("Hooray! You've earned $"+money+" and altogether $" + fReward + " for all tasks! Now Click \"Continue\" to continue");
+        $("#next-btn").text("Continue");
     }
 
 });
@@ -530,7 +531,7 @@ $("#next-btn").click(function(){
 });
 $(document).ready(function(){
     genChart();
-    $("#progress-txt").text("You are at "+taskCnt+" of the 8 tasks");
+    $("#progress-txt").text("Task "+taskCnt+" out of the 8");
     $("#slider-control").hide();//pause the slider as we don't use it in our tasks.
     $("#add-more-btn").show();
     $("#draw-line-btn").show();

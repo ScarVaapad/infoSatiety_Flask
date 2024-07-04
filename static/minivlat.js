@@ -12,8 +12,8 @@ let vlat_files = [
     ,"StackedBar.png"
     ,"LineChart.png"
     ,"BarChart.png"
-    ,"StackedArea.png"
     ,"AreaChart.png"
+    ,"StackedArea.png"
     ,"Scatterplot.png"
 ]
 
@@ -48,15 +48,14 @@ let correct_answers = ["False", "Great Britain", "30-40 km", "True", "17.6%", "S
 let vis_file,vis_question,vis_choices,vis_correct_answer;
 let user_response = {};
 let user_minivlat_score;
+let selected
 
 function task_finish_handler(){
-    let selected = $("input[type='radio'][name='vlat-choices']:checked");
-    if(selected.length > 0){
-        user_response[vis_question] = selected.val();
-        if(selected.val() == vis_correct_answer){
-            user_minivlat_score += 1;
-        }
+
+    if(selected == vis_correct_answer){
+        user_minivlat_score += 1;
     }
+
     console.log('mini vlat score: ', user_minivlat_score);
     localStorage.setItem('minivlat_score', user_minivlat_score);
 
@@ -95,12 +94,6 @@ $(document).ready(function () {
         user_minivlat_score = parseInt(localStorage.getItem('minivlat_score'));
     }
     vlatCnt = urlParams.get("vlat_cnt");
-
-    if(vlatCnt == vlat_files.length){
-        $("#next-btn").hide();
-        $("#task-desc").show();
-    }
-
     let _cnt = parseInt(vlatCnt)-1;
     vis_file = imageUrl+vlat_files[_cnt];
 
@@ -112,19 +105,27 @@ $(document).ready(function () {
     $("#vlat-div").append(img);
     $("#question-div").text(vis_question);
 
+    let choiceContainer = $("#choice-list");
+    choiceContainer.empty();
+    let button_width_p = 1/(vis_choices.length+1)*100-2;
+    button_width_p = Number(button_width_p.toFixed());
+    console.log("button percentage: "+button_width_p);
     $.each(vis_choices, function(i, val){
-        $("#choice-list").append("<li><input type='radio' name='vlat-choices' value='"+val+"'>"+val+"</li>");
+        let button = $("<button type=\"button\" class=\"btn btn-primary\" style=\"width: "+button_width_p+"%; margin-right: 5px; margin-bottom: 10px;\">").text(val);
+        button.click(function(){
+            selected = $(this).text();
+            task_finish_handler();
+        });
+        choiceContainer.append(button);
     });
+    let skipButton = $("<button type=\"button\" class=\"btn btn-primary\" style=\"width: "+button_width_p+"%; margin-right: 5px; margin-bottom: 10px;\">").text("Skip");
+    skipButton.click(function(){
+            selected = $(this).text();
+            task_finish_handler();
+        });
+    choiceContainer.append(skipButton);
 
     $("#progress-txt").text("This is "+(parseInt(vlatCnt)).toString()+" of "+vlat_files.length.toString()+" visualization tests");
-});
-
-$("#next-btn").click(function() {
-    task_finish_handler();
-});
-$("#task-desc").click(function( event ) {
-    task_finish_handler();
-
 });
 
 var downloadTimer = setInterval(function(){

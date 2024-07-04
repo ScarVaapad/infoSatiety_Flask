@@ -96,6 +96,10 @@ def task():
 def post_task():
     return render_template('/post_task.html')
 
+@app.route("/questionnaire")
+def questionnaire():
+    return render_template('/questionnaire.html')
+
 @app.route("/submit",methods=['POST'])
 def submit():
 
