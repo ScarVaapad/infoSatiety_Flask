@@ -515,6 +515,7 @@ $("#next-btn").click(function(){
     }
 });
 $(document).ready(function(){
+    window.history.forward();
     genChart();
     $("#progress-txt").text("Practice "+sampleCnt+" out of 3");
     $("#slider-control").hide();//pause the slider as we don't use it in our tasks.

@@ -1,6 +1,6 @@
 
 $( "#start-button" ).click(function() {
-    window.location.href = "questionnaire";
+    window.location.href = "information";
 });
 
 

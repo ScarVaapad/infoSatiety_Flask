@@ -60,24 +60,7 @@ function task_finish_handler(){
     localStorage.setItem('minivlat_score', user_minivlat_score);
 
     if(vlatCnt == vlat_files.length){
-        let url = "/submit";
-        let data = JSON.stringify(localStorage)
-
-        fetch(url,{
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: data
-        })
-        .then(response => {
-          if(response.redirected){
-            window.location.href = response.url;
-          }
-        })
-        .catch((error) => {
-          console.error('Error',error);
-        });
+        window.location.href = "task_desc"
     }
     else{
         window.location.href = "MiniVlat?vlat_cnt="+(parseInt(vlatCnt)+1).toString();

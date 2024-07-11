@@ -28,7 +28,7 @@ $( "#my-form" ).submit(function( event ) {
 
         localStorage.setItem('Personality', JSON.stringify( values));
 
-        window.location.href = "pre_miniVlat";
+        window.location.href = "questionnaire";
     }
 
 });

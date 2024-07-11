@@ -12,3 +12,11 @@
 .container {
     max-width: 75%;
 }
+
+table {
+    width: 100%; /* This will make the table full width */
+    table-layout: fixed; /* This will fix the column widths */
+}
+td, th {
+    overflow: auto; /* This will add a scrollbar when the content is too wide */
+}
