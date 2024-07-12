@@ -97,7 +97,11 @@ let reward = 100;
 // variables for user behaviour data collection
 let userBehaviours= {};
 
-// give user a score!
+// give user a score! first define the logistic function
+function logisitcFunction(x,L=1,k=1,x0=0){
+    return L/(1+Math.exp(-k*(x-x0)));
+}
+//
 function userScore(reward,u_line,r_line,centroid){
     if(u_line.length==0){
         return 0;
@@ -122,8 +126,8 @@ function userScore(reward,u_line,r_line,centroid){
         const distDecayRate = 0.001;
         const degreeDecayRate = 0.02;
         // Calculate the decay for distance and degree
-        const distDecay = Math.exp(-distDecayRate * center_dist);
-        const degreeDecay = Math.exp(-degreeDecayRate * line_angle);
+        const distDecay = logisitcFunction(center_dist,1,-0.2,100);
+        const degreeDecay = logisitcFunction(line_angle,1,-0.2,45)
 
         let multiplier = distDecay * degreeDecay;
         console.log("center distance",center_dist);
@@ -319,8 +323,8 @@ function showLine(_d){
     margin_svg.append("circle") // Draw the centroid of the data points
         .attr("cx", visCentroid.x)
         .attr("cy", visCentroid.y)
-        .attr("r", 10)
-        .style("fill", "red");
+        .attr("r", 6)
+        .style("fill", "blue");
 
     reg_line_data.forEach(function(d){
         d.x += margin.left;
@@ -486,7 +490,7 @@ $("#submit-result-btn" ).click(function() {
     userBehaviours["draw-line"] = userBehaviour.showResult();
 
     let final_res = userScore(reward, userLineData, regLineData , visCentroid).toFixed(1);
-    $("#notification").html("Hooray! You've got "+final_res+" points! Now Click \"Next practice\" to continue <br><b>Important</b>: we present the whole dataset in practices only <br>In tasks, you won't see the data points and true trend-line")
+    $("#notification").html("Hooray! You've got "+final_res+" points! Now Click \"Next practice\" to continue! <br> <b>Important</b>: we present the whole dataset in practices only. In tasks, you won't see the data points and true trend-line")
     console.log("User score: ", final_res);
 
     if(parseInt(sampleCnt) == samples.length) {
