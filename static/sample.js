@@ -123,11 +123,9 @@ function userScore(reward,u_line,r_line,centroid){
 
         // Constants to define the rate of decay
         // These can be adjusted to change how quickly the value decays
-        const distDecayRate = 0.001;
-        const degreeDecayRate = 0.02;
         // Calculate the decay for distance and degree
         const distDecay = logisitcFunction(center_dist,1,-0.2,100);
-        const degreeDecay = logisitcFunction(line_angle,1,-0.2,45)
+        const degreeDecay = logisitcFunction(line_angle,1,-0.1,45)
 
         let multiplier = distDecay * degreeDecay;
         console.log("center distance",center_dist);
@@ -420,7 +418,7 @@ function drawCILine(_d){
 $("#add-more-btn").click(function(){
     $("#notification").html("You can request more data by hitting \"Request more data\" button, points will be deducted upon request<br>Once you believed you've seen enough data, click on \"Draw the line\" to draw the trend")
     if(reward >=0){
-        reward -=2
+        reward -=1
     }else{
         reward = 0;
     }

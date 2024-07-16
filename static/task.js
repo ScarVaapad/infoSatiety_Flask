@@ -97,6 +97,11 @@ let reward = 100;
 let userBehaviours= {};
 
 // give user a score!
+// give user a score! first define the logistic function
+function logisitcFunction(x,L=1,k=1,x0=0){
+    return L/(1+Math.exp(-k*(x-x0)));
+}
+//
 function userScore(reward,u_line,r_line,centroid){
     if(u_line.length==0){
         return 0;
@@ -118,11 +123,9 @@ function userScore(reward,u_line,r_line,centroid){
 
         // Constants to define the rate of decay
         // These can be adjusted to change how quickly the value decays
-        const distDecayRate = 0.001;
-        const degreeDecayRate = 0.02;
         // Calculate the decay for distance and degree
-        const distDecay = Math.exp(-distDecayRate * center_dist);
-        const degreeDecay = Math.exp(-degreeDecayRate * line_angle);
+        const distDecay = logisitcFunction(center_dist,1,-0.2,100);
+        const degreeDecay = logisitcFunction(line_angle,1,-0.1,45)
 
         let multiplier = distDecay * degreeDecay;
         console.log("center distance",center_dist);
