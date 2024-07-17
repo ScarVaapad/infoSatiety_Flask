@@ -124,8 +124,8 @@ function userScore(reward,u_line,r_line,centroid){
         // Constants to define the rate of decay
         // These can be adjusted to change how quickly the value decays
         // Calculate the decay for distance and degree
-        const distDecay = logisitcFunction(center_dist,1,-0.2,100);
-        const degreeDecay = logisitcFunction(line_angle,1,-0.1,45)
+        const distDecay = logisitcFunction(center_dist,1,-0.15,100);
+        const degreeDecay = logisitcFunction(line_angle,1,-0.08,45)
 
         let multiplier = distDecay * degreeDecay;
         console.log("center distance",center_dist);

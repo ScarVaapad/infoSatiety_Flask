@@ -1,6 +1,6 @@
 __author__ = 'David Gotz, gotz@unc.edu, Onyen = gotz'
 
-from flask import Flask, render_template, request, jsonify, redirect
+from flask import Flask, render_template, request, jsonify, redirect, session
 from flask import url_for
 from markupsafe import escape
 
@@ -67,9 +67,11 @@ def big5():
 def pre_miniVlat():
     return render_template('/pre_miniVlat.html')
 
-@app.route("/MiniVlat")
+@app.route("/MiniVlat", methods=['POST'])
 def miniVlat():
-    vlatCnt = request.args.get('vlat_cnt')
+    vlatCnt = session.get('vlat_cnt',0)
+    vlatCnt+=1
+    session['vlat_cnt']=vlatCnt
     return render_template('/MiniVlat.html',vlat_cnt=vlatCnt)
 
 @app.route("/task_desc")

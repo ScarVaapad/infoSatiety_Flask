@@ -50,8 +50,8 @@ let user_response = {};
 let user_minivlat_score;
 let selected
 
-function task_finish_handler(){
-
+function task_finish_handler(e){
+    e.preventDefault();
     if(selected == vis_correct_answer){
         user_minivlat_score += 1;
     }
@@ -94,17 +94,17 @@ $(document).ready(function () {
     button_width_p = Number(button_width_p.toFixed());
     console.log("button percentage: "+button_width_p);
     $.each(vis_choices, function(i, val){
-        let button = $("<button type=\"button\" class=\"btn btn-primary\" style=\"width: "+button_width_p+"%; margin-right: 5px; margin-bottom: 10px;\">").text(val);
-        button.click(function(){
+        let button = $("<button type=\"submit\" class=\"btn btn-primary\" style=\"width: "+button_width_p+"%; margin-right: 5px; margin-bottom: 10px;\">").text(val);
+        button.submit(function(e){
             selected = $(this).text();
-            task_finish_handler();
+            task_finish_handler(e);
         });
         choiceContainer.append(button);
     });
-    let skipButton = $("<button type=\"button\" class=\"btn btn-primary\" style=\"width: "+button_width_p+"%; margin-right: 5px; margin-bottom: 10px;\">").text("Skip");
-    skipButton.click(function(){
+    let skipButton = $("<button type=\"submit\" class=\"btn btn-primary\" style=\"width: "+button_width_p+"%; margin-right: 5px; margin-bottom: 10px;\">").text("Skip");
+    skipButton.submit(function(e){
             selected = $(this).text();
-            task_finish_handler();
+            task_finish_handler(e);
         });
     choiceContainer.append(skipButton);
 

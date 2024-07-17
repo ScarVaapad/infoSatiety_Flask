@@ -56,6 +56,11 @@ let samples = ['cor0.2.csv','cor0.9.csv','cor0.5.csv'];
 let permutations = [{'r':0,'m_x':0,'m_y':0},{'r':90,'m_x':-0.5,'m_y':0},{'r':180,'m_x':-0.4,'m_y':-0.2},{'r':270,'m_x':-0.3,'m_y':0.3}];
 // let samples = ['cor0.1.csv','cor0.2.csv','cor0.3.csv','cor0.4.csv','cor0.5.csv','cor0.6.csv','cor0.7.csv','cor0.8.csv','cor0.9.csv'];
 
+// For tutorial, setting up flags to tell users about their performance
+let isAngleTooWide = false;
+let isDistanceTooLarge = false;
+let isDataTooMuch = false;
+
 // TEST: read all files and print the ranges
 // Read each file and print the range
 let filenames = samples.map(function(sample) {
@@ -124,8 +129,8 @@ function userScore(reward,u_line,r_line,centroid){
         // Constants to define the rate of decay
         // These can be adjusted to change how quickly the value decays
         // Calculate the decay for distance and degree
-        const distDecay = logisitcFunction(center_dist,1,-0.2,100);
-        const degreeDecay = logisitcFunction(line_angle,1,-0.1,45)
+        const distDecay = logisitcFunction(center_dist,1,-0.15,100);
+        const degreeDecay = logisitcFunction(line_angle,1,-0.08,30)
 
         let multiplier = distDecay * degreeDecay;
         console.log("center distance",center_dist);
@@ -133,6 +138,15 @@ function userScore(reward,u_line,r_line,centroid){
         console.log("line angle",line_angle);
         console.log("degree decay",degreeDecay);
         console.log("multiplier",multiplier);
+        if(reward<80){
+            isDataTooMuch = true;
+        }
+        if(distDecay<0.85){
+            isDistanceTooLarge = true;
+        }
+        if(degreeDecay<0.85){
+            isAngleTooWide = true;
+        }
         return _reward * multiplier;
     }
 }
@@ -416,7 +430,7 @@ function drawCILine(_d){
 
 //Button function to add more data to the scatterplot
 $("#add-more-btn").click(function(){
-    $("#notification").html("You can request more data by hitting \"Request more data\" button, points will be deducted upon request<br>Once you believed you've seen enough data, click on \"Draw the line\" to draw the trend")
+    $("#notification").html("You can request more data by hitting \"Request more data\" button,<br> <b>Important: base points will be deducted upon request </b><br>Once you believed you've seen enough data, click on \"Draw the line\" to draw the trend")
     if(reward >=0){
         reward -=1
     }else{
@@ -488,11 +502,29 @@ $("#submit-result-btn" ).click(function() {
     userBehaviours["draw-line"] = userBehaviour.showResult();
 
     let final_res = userScore(reward, userLineData, regLineData , visCentroid).toFixed(1);
-    $("#notification").html("Hooray! You've got "+final_res+" points! Now Click \"Next practice\" to continue! <br> <b>Important</b>: we present the whole dataset in practices only. In tasks, you won't see the data points and true trend-line")
+    let message1 = "";
+    let message2 = "";
+    let message3 = "";
+    if(isAngleTooWide){
+        message3 ="Your trend line has a large angle compared to underlying regression. ";
+    }else{
+        message3 ="Your trend line fits the underlying regression. ";
+    }
+    if(isDistanceTooLarge){
+        message2 ="Your trend line is a bit far from data center; ";
+    }else{
+        message2 ="Your trend line is close to center; ";
+    }
+    if(isDataTooMuch){
+        message1 ="You might have used too much data; ";
+    }else{
+        message1 ="Your data usage is efficient; ";
+    }
+    $("#notification").html(message1+message2+"<br>"+message3+"You've got "+final_res+" points!<br> Now Click \"Next practice\" to continue!")
     console.log("User score: ", final_res);
 
     if(parseInt(sampleCnt) == samples.length) {
-        $("#notification").text("Hooray! You've got "+final_res+" points! Now Click \"To tasks\" to continue");
+        $("#notification").html("You've got "+final_res+" points! <br><b>Important: Points, full data and regression line will no longer be shown in tasks.<br></b> Now Click \"To tasks\" to continue");
         $("#next-btn").text("To tasks");
     }
 });
@@ -517,7 +549,7 @@ $("#next-btn").click(function(){
     }
 });
 $(document).ready(function(){
-    window.history.forward();
+    noBack();
     genChart();
     $("#progress-txt").text("Practice "+sampleCnt+" out of 3");
     $("#slider-control").hide();//pause the slider as we don't use it in our tasks.

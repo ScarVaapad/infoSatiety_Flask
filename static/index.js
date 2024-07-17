@@ -10,8 +10,9 @@ fetch("color_name_code.json")
     colorSelected = json[getRandomInt(10)]
  });
 
-$( "#start-button" ).click(function() {
+$( "#start-button" ).click(function(e) {
     localStorage.clear();//for each experiment, clear the local storage
+
     window.location.href = "pre_miniVlat"
     // window.location.href = "information.html?task="+taskNum+"&cnt=0&color="+colorSelected;
 });
