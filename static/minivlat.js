@@ -50,8 +50,8 @@ let user_response = {};
 let user_minivlat_score;
 let selected
 
-function task_finish_handler(e){
-    e.preventDefault();
+function task_finish_handler(){
+
     if(selected == vis_correct_answer){
         user_minivlat_score += 1;
     }
@@ -60,7 +60,7 @@ function task_finish_handler(e){
     localStorage.setItem('minivlat_score', user_minivlat_score);
 
     if(vlatCnt == vlat_files.length){
-        window.location.href = "task_desc"
+        window.location.href = "task_desc?t-count=1"
     }
     else{
         window.location.href = "MiniVlat?vlat_cnt="+(parseInt(vlatCnt)+1).toString();
@@ -94,17 +94,17 @@ $(document).ready(function () {
     button_width_p = Number(button_width_p.toFixed());
     console.log("button percentage: "+button_width_p);
     $.each(vis_choices, function(i, val){
-        let button = $("<button type=\"submit\" class=\"btn btn-primary\" style=\"width: "+button_width_p+"%; margin-right: 5px; margin-bottom: 10px;\">").text(val);
-        button.submit(function(e){
+        let button = $("<button type=\"button\" class=\"btn btn-primary\" style=\"width: "+button_width_p+"%; margin-right: 5px; margin-bottom: 10px;\">").text(val);
+        button.click(function(){
             selected = $(this).text();
-            task_finish_handler(e);
+            task_finish_handler();
         });
         choiceContainer.append(button);
     });
-    let skipButton = $("<button type=\"submit\" class=\"btn btn-primary\" style=\"width: "+button_width_p+"%; margin-right: 5px; margin-bottom: 10px;\">").text("Skip");
-    skipButton.submit(function(e){
+    let skipButton = $("<button type=\"button\" class=\"btn btn-primary\" style=\"width: "+button_width_p+"%; margin-right: 5px; margin-bottom: 10px;\">").text("Skip");
+    skipButton.click(function(){
             selected = $(this).text();
-            task_finish_handler(e);
+            task_finish_handler();
         });
     choiceContainer.append(skipButton);
 
