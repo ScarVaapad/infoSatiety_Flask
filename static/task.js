@@ -502,11 +502,11 @@ $("#submit-result-btn" ).click(function() {
     localStorage.setItem("userScores",JSON.stringify(uScores));
     localStorage.setItem("finalReward",JSON.stringify(fReward));
 
-    $("#notification").text("Hooray! You've got "+final_res+" points and earned $"+money+", currently $"+fReward+" for all tasks! Click \"Next task\" to continue");
+    $("#notification").text("You've got "+final_res+" points and earned $"+money+", currently $"+fReward+" for all tasks! Click \"Next task\" to continue");
     console.log("User score: ", final_res);
 
     if(parseInt(taskCnt) == samples.length) {
-        $("#notification").text("Hooray! You've earned $"+money+" and altogether $" + fReward + " for all tasks! Now Click \"Continue\" to continue");
+        $("#notification").text("You've earned $"+money+" and altogether $" + fReward + " for all tasks! Now Click \"Continue\" to continue");
         $("#next-btn").text("Continue");
     }
 

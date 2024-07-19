@@ -27,8 +27,11 @@ $(document).ready(function () {
     t_count = urlParams.get("t-count");
     let tcnt = parseInt(t_count)-1;
     let vis_file = imageUrl+tutorial_images[tcnt];
-    let t_1 = tutorials_1[tcnt];
-    let t_2 = tutorials_2[tcnt];
+    let t_1 = "Your task interface is shown below, please read the instructions marked in red.";
+    let t_2 = "Some of those instructions will also be shown to you during tasks.";
+
+    //let t_1 = tutorials_1[tcnt];
+    //let t_2 = tutorials_2[tcnt];
 
     let img = $("<img />").attr('src', vis_file).attr('width', '560px').attr('height', '500px').attr('id', 'vlat-img');
     $("#task-intro-div").append(img);

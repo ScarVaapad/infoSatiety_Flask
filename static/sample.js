@@ -505,26 +505,16 @@ $("#submit-result-btn" ).click(function() {
     let message1 = "";
     let message2 = "";
     let message3 = "";
-    if(isAngleTooWide){
-        message3 ="Your trend line has a large angle compared to underlying regression. ";
-    }else{
-        message3 ="Your trend line fits the underlying regression. ";
+    if(isAngleTooWide || isDistanceTooLarge){
+        message1 ="To get higher points, consider spending more points";
+        message2 = "and request more data to make your estimation more accurate.";
     }
-    if(isDistanceTooLarge){
-        message2 ="Your trend line is a bit far from data center; ";
-    }else{
-        message2 ="Your trend line is close to center; ";
-    }
-    if(isDataTooMuch){
-        message1 ="You might have used too much data; ";
-    }else{
-        message1 ="Your data usage is efficient; ";
-    }
-    $("#notification").html(message1+message2+"<br>"+message3+"You've got "+final_res+" points!<br> Now Click \"Next practice\" to continue!")
+
+    $("#notification").html("You've got "+final_res+" points! "+message1+"<br>"+message2+"<br> Now Click \"Next practice\" to continue!")
     console.log("User score: ", final_res);
 
     if(parseInt(sampleCnt) == samples.length) {
-        $("#notification").html("You've got "+final_res+" points! <br><b>Important: Points, full data and regression line will no longer be shown in tasks.<br></b> Now Click \"To tasks\" to continue");
+        $("#notification").html("You've got "+final_res+" points! "+message1+"<br><b>Important: Points, the correct line(blue) will no longer be shown in tasks.<br></b> Now Click \"To tasks\" to continue");
         $("#next-btn").text("To tasks");
     }
 });
