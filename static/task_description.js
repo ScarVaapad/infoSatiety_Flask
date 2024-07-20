@@ -2,17 +2,29 @@ let t_count;
 
 let dir = "Tutorial Images/";
 let tutorial_images = [
-    "T-Image01.png"
-    ,"T-Image02.png"
-    ,"T-Image03.png"
-    ,"T-Image04.png"
+    "T1.png"
+    ,"T2.png"
+    ,"T3.png"
+    ,"T4.png"
+    ,"T5.png"
+    ,"T6.png"
+    ,"T7.png"
+    ,"T8.png"
+    ,"T9.png"
+    ,"T10.png"
 ]
 
 let tutorials_1 =[
-    "In this study, you will be asked to use 8 interactive scatterplots to estimate trends."
-    ,"When you feel you have seen enough data to predict a general trend(straight line), click the \"Draw trend line\" button to draw your estimation line(red)."
-    ,"If you need to adjust your line after drawing, you can re-draw your line until you are satisfied."
-    ,"Your drawn line is then compared against the true regression line of the underlying dataset"
+    "In this study, you will be asked to use 8 interactive scatterplots to estimate trends.<br> <p> </p>"
+    ,"Each of the starting scatterplot will be blank like shown below, <br>there will be a button for you to request more data."
+    ,"You can request as many times as you like, but each request will cost you points. <br> <p> </p>"
+    ,"Note that different datasets will have different trends, and some might not be obvious. <br> The goal is to decide when is enough to be accurate."
+    ,"Once you feel you've seen enough data, you can use \"Draw the line\" button, <br> so you can start to draw the straight line that you believe represents the all the data."
+    ,"You can draw as many times as you like, no points will be deducted by drawing. <br> When you think your line fits the data, you can submit the result."
+    ,"Your drawn line is then compared against the \"right answer\",<br> the more accurate you get, the higher points you will earn."
+    ,"The below example shows a less accurate result. <br> You will get fewer points if you are inaccurate."
+    ,"You would want to keep the balance between the data you requested <br>and the accuracy you would achieve through available data."
+    ,"Finally, you will see the \"right answers\" in your next 3 practices, but will not see them in real tasks.<br> <p> </p>"
 ]
 let tutorials_2 =[
     "You have the option to request additional data, which will be added to the plot. Data cannot be removed from the scatterplot once been requested."
@@ -27,15 +39,15 @@ $(document).ready(function () {
     t_count = urlParams.get("t-count");
     let tcnt = parseInt(t_count)-1;
     let vis_file = imageUrl+tutorial_images[tcnt];
-    let t_1 = "Your task interface is shown below, please read the instructions marked in red.";
+    //let t_1 = "Your task interface is shown below, please read the instructions marked in red.";
     let t_2 = "Some of those instructions will also be shown to you during tasks.";
 
-    //let t_1 = tutorials_1[tcnt];
+    let t_1 = tutorials_1[tcnt];
     //let t_2 = tutorials_2[tcnt];
 
     let img = $("<img />").attr('src', vis_file).attr('width', '560px').attr('height', '500px').attr('id', 'vlat-img');
     $("#task-intro-div").append(img);
-    $("#t1").text(t_1);
+    $("#t1").html(t_1);
     $("#t2").text(t_2);
 
     if(t_count == tutorial_images.length) {
