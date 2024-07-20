@@ -1,5 +1,4 @@
-// import  {updateDB}  from "./firebase.js";
-//
+
 let values = {}
 
 let radio_cnt = 0;

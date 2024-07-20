@@ -60,7 +60,7 @@ function task_finish_handler(){
     localStorage.setItem('minivlat_score', user_minivlat_score);
 
     if(vlatCnt == vlat_files.length){
-        window.location.href = "task_desc?t-count=1"
+        window.location.href = "post_MiniVlat";
     }
     else{
         window.location.href = "MiniVlat?vlat_cnt="+(parseInt(vlatCnt)+1).toString();
@@ -108,7 +108,7 @@ $(document).ready(function () {
         });
     choiceContainer.append(skipButton);
 
-    $("#progress-txt").text("This is "+(parseInt(vlatCnt)).toString()+" of "+vlat_files.length.toString()+" visualization tests");
+    $("#progress-txt").text("Visualization Test: Question "+(parseInt(vlatCnt)).toString()+" of "+vlat_files.length.toString());
 });
 
 var downloadTimer = setInterval(function(){

@@ -72,6 +72,10 @@ def miniVlat():
     vlatCnt = request.args.get('vlat_cnt')
     return render_template('/MiniVlat.html',vlat_cnt=vlatCnt)
 
+@app.route("/post_MiniVlat")
+def postMiniVlat():
+    return render_template('/post_MiniVlat.html')
+
 @app.route("/task_desc")
 def task_desc():
     return render_template('/task_description.html')

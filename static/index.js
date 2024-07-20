@@ -12,6 +12,7 @@ fetch("color_name_code.json")
 
 $( "#start-button" ).click(function(e) {
     localStorage.clear();//for each experiment, clear the local storage
+    //TODO: put user id and maybe code here
 
     window.location.href = "pre_miniVlat"
     // window.location.href = "information.html?task="+taskNum+"&cnt=0&color="+colorSelected;
