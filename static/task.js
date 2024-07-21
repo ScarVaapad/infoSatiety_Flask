@@ -533,6 +533,7 @@ $("#next-btn").click(function(){
     }
 });
 $(document).ready(function(){
+    noBack();
     genChart();
     $("#progress-txt").text("Task "+taskCnt+" out of the 8");
     $("#slider-control").hide();//pause the slider as we don't use it in our tasks.

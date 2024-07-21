@@ -69,6 +69,7 @@ function task_finish_handler(){
 
 
 $(document).ready(function () {
+    noBack();
     const urlParams = new URLSearchParams(window.location.search);
     if(localStorage.getItem('minivlat_score') === null) {
         user_minivlat_score = 0;
