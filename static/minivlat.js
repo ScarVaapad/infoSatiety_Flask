@@ -71,7 +71,6 @@ function task_finish_handler(){
 $(document).ready(function () {
     noBack();
     let perfEntries = performance.getEntriesByType("navigation");
-
     if (perfEntries.length > 0) {
         let p = perfEntries[0];
         console.log('Navigation type: ' + p.type);

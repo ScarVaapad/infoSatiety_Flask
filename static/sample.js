@@ -540,6 +540,14 @@ $("#next-btn").click(function(){
 });
 $(document).ready(function(){
     noBack();
+    let perfEntries = performance.getEntriesByType("navigation");
+    if (perfEntries.length > 0) {
+        let p = perfEntries[0];
+        console.log('Navigation type: ' + p.type);
+        if(p.type=='back_forward' ||p.type=='reload'){
+            window.location.href="deadend";
+        }
+    }
     genChart();
     $("#progress-txt").text("Practice "+sampleCnt+" out of 3");
     $("#slider-control").hide();//pause the slider as we don't use it in our tasks.
