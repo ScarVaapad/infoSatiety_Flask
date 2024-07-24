@@ -75,7 +75,7 @@ $(document).ready(function () {
         let p = perfEntries[0];
         console.log('Navigation type: ' + p.type);
         if(p.type=='back_forward' ||p.type=='reload'){
-            window.location.href="deadend";
+            window.location.href="d_finish";
         }
     }
 
