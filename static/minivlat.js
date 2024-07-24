@@ -70,6 +70,16 @@ function task_finish_handler(){
 
 $(document).ready(function () {
     noBack();
+    let perfEntries = performance.getEntriesByType("navigation");
+
+    if (perfEntries.length > 0) {
+        let p = perfEntries[0];
+        console.log('Navigation type: ' + p.type);
+        if(p.type=='back_forward' ||p.type=='reload'){
+            window.location.href="deadend";
+        }
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     if(localStorage.getItem('minivlat_score') === null) {
         user_minivlat_score = 0;
@@ -110,6 +120,7 @@ $(document).ready(function () {
     choiceContainer.append(skipButton);
 
     $("#progress-txt").text("Visualization Test: Question "+(parseInt(vlatCnt)).toString()+" of "+vlat_files.length.toString());
+
 });
 
 var downloadTimer = setInterval(function(){

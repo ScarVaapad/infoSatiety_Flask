@@ -117,6 +117,9 @@ def submit():
 def finish():
     return render_template('/finish.html')
 
+@app.route("/deadend")
+def deadend():
+    return render_template('/disqualify.html')
 
 
 # Run the web server.
