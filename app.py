@@ -117,6 +117,10 @@ def submit():
 def finish():
     return render_template('/finish.html')
 
+@app.route("/lafin")
+def lafin():
+    return redirect("https://connect.cloudresearch.com/participant/project/C733AD78DC/complete");
+
 @app.route("/d_finish")
 def d_finish():
     return render_template('/disqualify.html')

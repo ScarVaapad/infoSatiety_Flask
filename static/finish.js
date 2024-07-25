@@ -1,9 +1,13 @@
 
 const urlParams = new URLSearchParams(window.location.search);
 
-const code = urlParams.get('code');
+const code = "C733AD78DC"
 
 
 $(document).ready(function(){
     $("#code-text").text(code);
   });
+
+$("#finish").click(function(){
+    window.location.href ="lafin";
+});
