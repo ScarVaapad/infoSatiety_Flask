@@ -4,9 +4,9 @@ $(document).ready(function(){
     const pid = urlParams.get('participantId');
     const aid = urlParams.get('assignmentId');
     const pjktid = urlParams.get('projectId');
-    localStorage.set('participantId',pid);
-    localStorage.set('assignmentId',aid);
-    localStorage.set('projectId',pjktid);
+    localStorage.setItem('participantId',pid);
+    localStorage.setItem('assignmentId',aid);
+    localStorage.setItem('projectId',pjktid);
 });
 
 $( "#start-button" ).click(function(e) {
