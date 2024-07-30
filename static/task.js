@@ -434,6 +434,7 @@ $("#draw-line-btn").click(function(){
     $("#notification").text("Once you are satisfied with your line, click \"Submit\" to proceed")
     userBehaviour.stop();
     userBehaviours["request-data"] = userBehaviour.showResult();
+    userBehaviour.start();
 
     $("#add-more-btn").prop('disabled', true).css('background-color', 'grey');
     svg.on("mousedown", function(event) {
@@ -558,7 +559,7 @@ $(document).ready(function(){
             mouseScroll: true,
             timeCount: true,
             clearAfterProcess: true,
-            processTime: 15,
+            processTime: false,
             processData: function(results){
                 console.log(results);
                 return results;
