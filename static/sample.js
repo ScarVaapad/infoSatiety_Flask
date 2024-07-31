@@ -445,8 +445,9 @@ $("#draw-line-btn").click(function(){
 //user can only draw one line once, and adjust the end points
     //user line data stored as global variable: userLineData
     $("#notification").html("You can no longer request more data, but can draw as many times as you like <br>Once you are satisfied with your line, click \"Submit\" to proceed")
-    userBehaviour.stop();
+
     userBehaviours["request-data"] = userBehaviour.showResult();
+    userBehaviour.stop();
     userBehaviour.start();
 
     $("#add-more-btn").prop('disabled', true).css('background-color', 'grey');
@@ -498,9 +499,9 @@ $("#submit-result-btn" ).click(function() {
 
     // show the reward
 
-    userBehaviour.stop();
-    userBehaviour.showResult();
+
     userBehaviours["draw-line"] = userBehaviour.showResult();
+    userBehaviour.stop();
 
     let final_res = userScore(reward, userLineData, regLineData , visCentroid).toFixed(1);
     let message1 = "";
@@ -524,6 +525,7 @@ $("#next-btn").click(function(){
     let results ={}
     results["request_behavior"] = userBehaviours["request-data"];
     results["data_points"] = d_total;
+    results["data_request_time"] = d_total/5;
     results["draw_behavior"] = userBehaviours["draw-line"];
     results["regLineData"] = regLineData;
     results["userLineData"] = userLineData;

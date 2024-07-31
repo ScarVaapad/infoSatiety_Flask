@@ -432,8 +432,9 @@ $("#draw-line-btn").click(function(){
 //user can only draw one line once, and adjust the end points
     //user line data stored as global variable: userLineData
     $("#notification").text("Once you are satisfied with your line, click \"Submit\" to proceed")
-    userBehaviour.stop();
+
     userBehaviours["request-data"] = userBehaviour.showResult();
+    userBehaviour.stop();
     userBehaviour.start();
 
     $("#add-more-btn").prop('disabled', true).css('background-color', 'grey');
@@ -485,9 +486,9 @@ $("#submit-result-btn" ).click(function() {
 
     // show the reward
 
-    userBehaviour.stop();
-    userBehaviour.showResult();
+
     userBehaviours["draw-line"] = userBehaviour.showResult();
+    userBehaviour.stop();
 
     let final_res = parseFloat(userScore(reward, userLineData, regLineData , visCentroid).toFixed(1));
     let money = final_res*0.6/100+0.3
