@@ -37,8 +37,8 @@ function getRandomInt(max) {
 
 // set the dimensions and margins of the graph
 const margin = {top: 10, right: 30, bottom: 30, left: 60},
-    width = 660 - margin.left - margin.right,
-    height = 600 - margin.top - margin.bottom;
+    width = 600 - margin.left - margin.right,
+    height = 540 - margin.top - margin.bottom;
 const w = 400;
 const h = 400;
 

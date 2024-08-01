@@ -37,8 +37,8 @@ function getRandomInt(max) {
 
 // set the dimensions and margins of the graph
 const margin = {top: 10, right: 30, bottom: 30, left: 60},
-    width = 660 - margin.left - margin.right,
-    height = 600 - margin.top - margin.bottom;
+    width = 600 - margin.left - margin.right,
+    height = 540 - margin.top - margin.bottom;
 const w = 400;
 const h = 400;
 
@@ -504,11 +504,11 @@ $("#submit-result-btn" ).click(function() {
     localStorage.setItem("userScores",JSON.stringify(uScores));
     localStorage.setItem("finalReward",JSON.stringify(fReward));
 
-    $("#notification").text("You've got "+final_res+" points and earned $"+money+", currently $"+fReward+" for all tasks! Click \"Next task\" to continue");
+    $("#notification").text("You've got "+final_res.toFixed(2)+" points and earned $"+money+", currently $"+fReward.toFixed(2)+" for all tasks! Click \"Next task\" to continue");
     console.log("User score: ", final_res);
 
     if(parseInt(taskCnt) == samples.length) {
-        $("#notification").text("You've earned $"+money+" and altogether $" + fReward + " for all tasks! Now Click \"Continue\" to continue");
+        $("#notification").text("You've earned $"+money.toFixed(2)+" and altogether $" + fReward.toFixed(2) + " for all tasks! Now Click \"Continue\" to continue");
         $("#next-btn").text("Continue");
     }
 
