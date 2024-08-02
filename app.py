@@ -13,6 +13,8 @@ import threading
 import os
 
 mountPath = 'data/data.csv'
+# Hard coded schema for data logging in case localStorage pass extra lines other than intended ones and possible random order of items
+schema = ['task_4', 'Personality', 'Demographic', 'tutorial_1', 'task_8', 'task_3', 'tutorial_2', 'task_5', 'tutorial_3', 'minivlat_score', 'task_6', 'task_2', 'task_1', 'userScores', 'Post_Task_Q', 'task_7', 'finalReward']
 global_lock = threading.Lock()
 def safe_write_csv(json_data):
     file_exists = os.path.isfile(mountPath)
@@ -21,9 +23,9 @@ def safe_write_csv(json_data):
             writer = csv.writer(csvfile)
 
             if not file_exists:
-                writer.writerow(json_data.keys())
+                writer.writerow(schema)
 
-            writer.writerow(json_data.values())
+            writer.writerow([json_data.get(key,"") for key in schema])
 
 # Create a Flask web application server
 # __name__ is a "special" variable (notice the underscores) and its value is the name of the current module
