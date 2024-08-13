@@ -527,6 +527,7 @@ $("#next-btn").click(function(){
     results["data_points"] = d_total;
     results["data_request_time"] = d_total/5;
     results["draw_behavior"] = userBehaviours["draw-line"];
+    results["centroid"] = visCentroid;
     results["regLineData"] = regLineData;
     results["userLineData"] = userLineData;
 
