@@ -432,7 +432,7 @@ function drawCILine(_d){
 $("#add-more-btn").click(function(){
     $("#notification").html("You can request more data by hitting \"Request more data\" button,<br> <b>Important: base points will be deducted upon request </b><br>Once you believed you've seen enough data, click on \"Draw the line\" to draw the trend")
     if(reward >=0){
-        reward -=1
+        reward -=2
     }else{
         reward = 0;
     }
