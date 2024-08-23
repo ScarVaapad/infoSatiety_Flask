@@ -102,12 +102,11 @@ function logisitcFunction(x,L=1,k=1,x0=0){
     return L/(1+Math.exp(-k*(x-x0)));
 }
 //
-function userScore(reward,u_line,r_line,centroid){
+function userScore(u_line,r_line,centroid){
     if(u_line.length==0){
         return 0;
     }
     else{
-        let _reward = reward;
 
         // Calculate the line coefficients from the two points
         const a = u_line[1].y - u_line[0].y;
@@ -133,7 +132,7 @@ function userScore(reward,u_line,r_line,centroid){
         console.log("line angle",line_angle);
         console.log("degree decay",degreeDecay);
         console.log("multiplier",multiplier);
-        return _reward * multiplier;
+        return multiplier;
     }
 }
 
@@ -490,22 +489,42 @@ $("#submit-result-btn" ).click(function() {
     userBehaviours["draw-line"] = userBehaviour.showResult();
     userBehaviour.stop();
 
-    let final_res = parseFloat(userScore(reward, userLineData, regLineData , visCentroid).toFixed(1));
+    let accuracy = parseFloat(userScore(userLineData, regLineData , visCentroid));
+    let final_res = (reward*accuracy).toFixed(1);
     let money = final_res*0.6/100+0.3
     money = Number(money.toFixed(2))
 
     // I set up the items in the previous page, pre_task.js, so it is initialized
+    let tPoints = JSON.parse(localStorage.getItem("totalDataUsed"));
     let uScores = JSON.parse(localStorage.getItem("userScores"));
     let fReward = JSON.parse(localStorage.getItem("finalReward"));
+    let uAccu = JSON.parse(localStorage.getItem("taskAccu"));
+
     fReward = parseFloat(fReward);
+    tPoints+=d_total;
+    uAccu.push(accuracy);
     uScores.push(final_res);
     fReward +=money;
     fReward = Number(fReward.toFixed(2))
     localStorage.setItem("userScores",JSON.stringify(uScores));
     localStorage.setItem("finalReward",JSON.stringify(fReward));
+    localStorage.setItem("taskAccu",JSON.stringify(uAccu));
+    localStorage.setItem("totalDataUsed",JSON.stringify(tPoints));
 
-    $("#notification").text("You've got "+final_res.toFixed(2)+" points and earned $"+money+", currently $"+fReward.toFixed(2)+" for all tasks! Click \"Next task\" to continue");
+    $("#notification").text("You've got "+final_res+" points and earned $"+money+", currently $"+fReward.toFixed(2)+" for all tasks! Click \"Next task\" to continue");
     console.log("User score: ", final_res);
+
+    if(parseInt(taskCnt)==5){
+        const tPoints = JSON.parse(localStorage.getItem("totalDataUsed"));
+        const uAccu = JSON.parse(localStorage.getItem("taskAccu"));
+        const averageAccu = uAccu.reduce((a,b)=>a+b)/uAccu.length;
+        console.log("tPoints:"+tPoints);
+        console.log("average accuracy:"+averageAccu);
+        if(tPoints<=60 || averageAccu<0.7){
+            window.location.href = "d_finish";
+            console.log("why are you returning?");
+        }
+    }
 
     if(parseInt(taskCnt) == samples.length) {
         $("#notification").text("You've earned $"+money.toFixed(2)+" and altogether $" + fReward.toFixed(2) + " for all tasks! Now Click \"Continue\" to continue");

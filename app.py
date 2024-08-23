@@ -14,7 +14,9 @@ import os
 
 mountPath = 'data/data.csv'
 # Hard coded schema for data logging in case localStorage pass extra lines other than intended ones and possible random order of items
-schema = ['task_4', 'Personality', 'Demographic', 'tutorial_1', 'assignmentId', 'task_8', 'task_3', 'participantId', 'tutorial_2', 'task_5', 'tutorial_3', 'minivlat_score', 'projectId', 'task_6', 'task_2', 'task_1', 'userScores', 'Post_Task_Q', 'task_7', 'finalReward']
+# schema = ['task_4', 'Personality', 'Demographic', 'tutorial_1', 'assignmentId', 'task_8', 'task_3', 'participantId', 'tutorial_2', 'task_5', 'tutorial_3', 'minivlat_score', 'projectId', 'task_6', 'task_2', 'task_1', 'userScores', 'Post_Task_Q', 'task_7', 'finalReward']
+# new schema for new data recording
+schema = ['task_4', 'Personality', 'Demographic', 'tutorial_1', 'assignmentId', 'taskAccu', 'task_8', 'task_3', 'participantId', 'tutorial_2', 'task_5', 'minivlat_score', 'projectId', 'tutorial_3', 'task_6', 'totalDataUsed', 'task_1', 'task_2', 'userScores', 'task_7', 'finalReward']
 global_lock = threading.Lock()
 def safe_write_csv(json_data):
     file_exists = os.path.isfile(mountPath)
