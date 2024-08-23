@@ -503,7 +503,7 @@ $("#submit-result-btn" ).click(function() {
     fReward = parseFloat(fReward);
     tPoints+=d_total;
     uAccu.push(accuracy);
-    uScores.push(final_res);
+    uScores.push(parseFloat(final_res));
     fReward +=money;
     fReward = Number(fReward.toFixed(2))
     localStorage.setItem("userScores",JSON.stringify(uScores));
