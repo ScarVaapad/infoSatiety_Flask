@@ -36,11 +36,12 @@ function getRandomInt(max) {
 }
 
 // set the dimensions and margins of the graph
+const w = 600;
+const h = 540;
 const margin = {top: 10, right: 30, bottom: 30, left: 60},
-    width = 600 - margin.left - margin.right,
-    height = 540 - margin.top - margin.bottom;
-const w = 400;
-const h = 400;
+    width = w - margin.left - margin.right,
+    height = h - margin.top - margin.bottom;
+
 
 let maxCatIndex;
 let taskNum, taskCnt, useShape, colorPalette, colors, sampleCnt, prevValue, permutationCnt;
@@ -107,49 +108,157 @@ function logisitcFunction(x,L=1,k=1,x0=0){
     return L/(1+Math.exp(-k*(x-x0)));
 }
 //
-function userScore(reward,u_line,r_line,centroid){
-    if(u_line.length==0){
-        return 0;
+
+// Using area to calculate the 'distance'
+// 1. extend the line to the borders
+function extendLineToBorder(line, svgWidth, svgHeight) {
+    const x1 = line[0].x;
+    const y1 = line[0].y;
+    const x2 = line[1].x;
+    const y2 = line[1].y;
+
+    // Calculate slope
+    const slope = (y2 - y1) / (x2 - x1);
+
+    // Calculate intersection points
+    let points = [];
+
+    // Intersection with left border (x = 0)
+    let y = y1 + slope * (0 - x1);
+    if (y >= 0 && y <= svgHeight) {
+        points.push({ x: 0, y: y });
     }
-    else{
-        let _reward = reward;
 
-        // Calculate the line coefficients from the two points
-        const a = u_line[1].y - u_line[0].y;
-        const b = u_line[0].x - u_line[1].x;
-        const c = u_line[1].x * u_line[0].y - u_line[0].x * u_line[1].y;
-
-        const center_dist = Math.abs(a * centroid.x + b * centroid.y + c) / Math.sqrt(a * a + b * b);
-
-        const slope_u = (u_line[1].y - u_line[0].y) / (u_line[1].x - u_line[0].x);
-        const slope_r = (r_line[1].y - r_line[0].y) / (r_line[1].x - r_line[0].x);
-
-        const line_angle = Math.abs(Math.atan((slope_u - slope_r) / (1 + slope_u * slope_r))) * 180 / Math.PI;
-
-        // Constants to define the rate of decay
-        // These can be adjusted to change how quickly the value decays
-        // Calculate the decay for distance and degree
-        const distDecay = logisitcFunction(center_dist,1,-0.15,100);
-        const degreeDecay = logisitcFunction(line_angle,1,-0.08,45)
-
-        let multiplier = distDecay * degreeDecay;
-        console.log("center distance",center_dist);
-        console.log("distance decay",distDecay);
-        console.log("line angle",line_angle);
-        console.log("degree decay",degreeDecay);
-        console.log("multiplier",multiplier);
-        if(reward<80){
-            isDataTooMuch = true;
-        }
-        if(distDecay<0.85){
-            isDistanceTooLarge = true;
-        }
-        if(degreeDecay<0.85){
-            isAngleTooWide = true;
-        }
-        return _reward * multiplier;
+    // Intersection with right border (x = svgWidth)
+    y = y1 + slope * (svgWidth - x1);
+    if (y >= 0 && y <= svgHeight) {
+        points.push({ x: svgWidth, y: y });
     }
+
+    // Intersection with top border (y = 0)
+    let x = x1 + (0 - y1) / slope;
+    if (x >= 0 && x <= svgWidth) {
+        points.push({ x: x, y: 0 });
+    }
+
+    // Intersection with bottom border (y = svgHeight)
+    x = x1 + (svgHeight - y1) / slope;
+    if (x >= 0 && x <= svgWidth) {
+        points.push({ x: x, y: svgHeight });
+    }
+
+    return [points[0],points[1]];
 }
+
+// 2. calculated the acute-angled area
+// 2.a decide whether there is intersection
+function getIntersectionPoint(l1, l2, svgWidth, svgHeight) {
+    const x1 = l1[0].x, y1 = l1[0].y, x2 = l1[1].x, y2 = l1[1].y;
+    const x3 = l2[0].x, y3 = l2[0].y, x4 = l2[1].x, y4 = l2[1].y;
+
+    // Calculate the denominator
+    const denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+
+    // Lines are parallel if denom is 0
+    if (denom === 0) return null;
+
+    // Calculate the intersection point
+    const intersectX = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / denom;
+    const intersectY = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / denom;
+
+    // Check if the intersection point is within the SVG boundaries
+    if (intersectX >= 0 && intersectX <= svgWidth && intersectY >= 0 && intersectY <= svgHeight) {
+        return { x: intersectX, y: intersectY };
+    }
+
+    return null;
+}
+// 3. use the area as indicate for userScore
+function polygonArea(points) {
+    let area = 0;
+    for (let i = 0; i < points.length; i++) {
+        const j = (i + 1) % points.length;
+        area += points[i].x * points[j].y - points[j].x * points[i].y;
+    }
+    return Math.abs(area / 2);
+}
+
+function userScore(u_line,r_line){
+    let uArea;
+    let uline = extendLineToBorder(u_line, w, h);
+    let rline = extendLineToBorder(r_line, w, h);
+    let intersection = getIntersectionPoint(u_line,r_line,w,h);
+    if(intersection){
+        const polygon1 = [
+            { x: uline[0]['x'], y: uline[0]['y'] },
+            { x: intersection.x, y: intersection.y },
+            { x: rline[0]['x'], y: rline[0]['y'] }
+        ];
+        const polygon2 = [
+            { x: uline[1]['x'], y: uline[1]['y'] },
+            { x: intersection.x, y: intersection.y },
+            { x: rline[1]['x'], y: rline[1]['y'] }
+        ];
+        uArea = polygonArea(polygon1)+polygonArea(polygon2);
+    }else{
+        const polygon = [
+            { x: uline[0]['x'], y: uline[0]['y']},
+            { x: uline[1]['x'], y: uline[1]['y']},
+            { x: rline[1]['x'], y: rline[1]['y']},
+            { x: rline[0]['x'], y: rline[0]['y'] }
+        ];
+        uArea = polygonArea(polygon);
+    }
+    let tolerableArea = w*h/2;
+
+    let perc = (tolerableArea-uArea)/tolerableArea;
+    console.log('percentage:',perc);
+    return perc;
+}
+
+// function userScore(reward,u_line,r_line,centroid){
+//     if(u_line.length==0){
+//         return 0;
+//     }
+//     else{
+//         let _reward = reward;
+//
+//         // Calculate the line coefficients from the two points
+//         const a = u_line[1].y - u_line[0].y;
+//         const b = u_line[0].x - u_line[1].x;
+//         const c = u_line[1].x * u_line[0].y - u_line[0].x * u_line[1].y;
+//
+//         const center_dist = Math.abs(a * centroid.x + b * centroid.y + c) / Math.sqrt(a * a + b * b);
+//
+//         const slope_u = (u_line[1].y - u_line[0].y) / (u_line[1].x - u_line[0].x);
+//         const slope_r = (r_line[1].y - r_line[0].y) / (r_line[1].x - r_line[0].x);
+//
+//         const line_angle = Math.abs(Math.atan((slope_u - slope_r) / (1 + slope_u * slope_r))) * 180 / Math.PI;
+//
+//         // Constants to define the rate of decay
+//         // These can be adjusted to change how quickly the value decays
+//         // Calculate the decay for distance and degree
+//         const distDecay = logisitcFunction(center_dist,1,-0.15,100);
+//         const degreeDecay = logisitcFunction(line_angle,1,-0.08,45)
+//
+//         let multiplier = distDecay * degreeDecay;
+//         console.log("center distance",center_dist);
+//         console.log("distance decay",distDecay);
+//         console.log("line angle",line_angle);
+//         console.log("degree decay",degreeDecay);
+//         console.log("multiplier",multiplier);
+//         if(reward<80){
+//             isDataTooMuch = true;
+//         }
+//         if(distDecay<0.85){
+//             isDistanceTooLarge = true;
+//         }
+//         if(degreeDecay<0.85){
+//             isAngleTooWide = true;
+//         }
+//         return _reward * multiplier;
+//     }
+// }
 
 function calculateCentroid(data) {
     let sumX = 0, sumY = 0;
@@ -503,7 +612,7 @@ $("#submit-result-btn" ).click(function() {
     userBehaviours["draw-line"] = userBehaviour.showResult();
     userBehaviour.stop();
 
-    let final_res = userScore(reward, userLineData, regLineData , visCentroid).toFixed(1);
+    let final_res = reward * userScore(userLineData, regLineData);
     let message1 = "";
     let message2 = "";
     let message3 = "";
@@ -512,11 +621,11 @@ $("#submit-result-btn" ).click(function() {
         message2 = "and request more data to make your estimation more accurate.";
     }
 
-    $("#notification").html("You've got "+final_res+" points! "+message1+"<br>"+message2+"<br> Now Click \"Next practice\" to continue!")
+    $("#notification").html("You've got "+final_res.toFixed(2)+" points! "+message1+"<br>"+message2+"<br> Now Click \"Next practice\" to continue!")
     console.log("User score: ", final_res);
 
     if(parseInt(sampleCnt) == samples.length) {
-        $("#notification").html("You've got "+final_res+" points! "+message1+"<br><b>Important: Points, the correct line(blue) will no longer be shown in tasks.<br></b> Now Click \"To tasks\" to continue");
+        $("#notification").html("You've got "+final_res.toFixed(2)+" points! "+message1+"<br><b>Important: Points, the correct line(blue) will no longer be shown in tasks.<br></b> Now Click \"To tasks\" to continue");
         $("#next-btn").text("To tasks");
     }
 });

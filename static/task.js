@@ -36,11 +36,12 @@ function getRandomInt(max) {
 }
 
 // set the dimensions and margins of the graph
+const w = 600;
+const h = 540;
 const margin = {top: 10, right: 30, bottom: 30, left: 60},
-    width = 600 - margin.left - margin.right,
-    height = 540 - margin.top - margin.bottom;
-const w = 400;
-const h = 400;
+    width = w - margin.left - margin.right,
+    height = h - margin.top - margin.bottom;
+
 
 let taskNum, taskCnt, useShape, colorPalette, colors, prevValue, permutationCnt;
 let timeleft = 150;
@@ -101,40 +102,147 @@ let userBehaviours= {};
 function logisitcFunction(x,L=1,k=1,x0=0){
     return L/(1+Math.exp(-k*(x-x0)));
 }
-//
-function userScore(u_line,r_line,centroid){
-    if(u_line.length==0){
-        return 0;
+
+// Using area to calculate the 'distance'
+// 1. extend the line to the borders
+function extendLineToBorder(line, svgWidth, svgHeight) {
+    const x1 = line[0].x;
+    const y1 = line[0].y;
+    const x2 = line[1].x;
+    const y2 = line[1].y;
+
+    // Calculate slope
+    const slope = (y2 - y1) / (x2 - x1);
+
+    // Calculate intersection points
+    let points = [];
+
+    // Intersection with left border (x = 0)
+    let y = y1 + slope * (0 - x1);
+    if (y >= 0 && y <= svgHeight) {
+        points.push({ x: 0, y: y });
     }
-    else{
 
-        // Calculate the line coefficients from the two points
-        const a = u_line[1].y - u_line[0].y;
-        const b = u_line[0].x - u_line[1].x;
-        const c = u_line[1].x * u_line[0].y - u_line[0].x * u_line[1].y;
-
-        const center_dist = Math.abs(a * centroid.x + b * centroid.y + c) / Math.sqrt(a * a + b * b);
-
-        const slope_u = (u_line[1].y - u_line[0].y) / (u_line[1].x - u_line[0].x);
-        const slope_r = (r_line[1].y - r_line[0].y) / (r_line[1].x - r_line[0].x);
-
-        const line_angle = Math.abs(Math.atan((slope_u - slope_r) / (1 + slope_u * slope_r))) * 180 / Math.PI;
-
-        // Constants to define the rate of decay
-        // These can be adjusted to change how quickly the value decays
-        // Calculate the decay for distance and degree
-        const distDecay = logisitcFunction(center_dist,1,-0.15,100);
-        const degreeDecay = logisitcFunction(line_angle,1,-0.08,45)
-
-        let multiplier = distDecay * degreeDecay;
-        console.log("center distance",center_dist);
-        console.log("distance decay",distDecay);
-        console.log("line angle",line_angle);
-        console.log("degree decay",degreeDecay);
-        console.log("multiplier",multiplier);
-        return multiplier;
+    // Intersection with right border (x = svgWidth)
+    y = y1 + slope * (svgWidth - x1);
+    if (y >= 0 && y <= svgHeight) {
+        points.push({ x: svgWidth, y: y });
     }
+
+    // Intersection with top border (y = 0)
+    let x = x1 + (0 - y1) / slope;
+    if (x >= 0 && x <= svgWidth) {
+        points.push({ x: x, y: 0 });
+    }
+
+    // Intersection with bottom border (y = svgHeight)
+    x = x1 + (svgHeight - y1) / slope;
+    if (x >= 0 && x <= svgWidth) {
+        points.push({ x: x, y: svgHeight });
+    }
+
+    return [points[0],points[1]];
 }
+
+// 2. calculated the acute-angled area
+// 2.a decide whether there is intersection
+function getIntersectionPoint(l1, l2, svgWidth, svgHeight) {
+    const x1 = l1[0].x, y1 = l1[0].y, x2 = l1[1].x, y2 = l1[1].y;
+    const x3 = l2[0].x, y3 = l2[0].y, x4 = l2[1].x, y4 = l2[1].y;
+
+    // Calculate the denominator
+    const denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+
+    // Lines are parallel if denom is 0
+    if (denom === 0) return null;
+
+    // Calculate the intersection point
+    const intersectX = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / denom;
+    const intersectY = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / denom;
+
+    // Check if the intersection point is within the SVG boundaries
+    if (intersectX >= 0 && intersectX <= svgWidth && intersectY >= 0 && intersectY <= svgHeight) {
+        return { x: intersectX, y: intersectY };
+    }
+
+    return null;
+}
+// 3. use the area as indicate for userScore
+function polygonArea(points) {
+    let area = 0;
+    for (let i = 0; i < points.length; i++) {
+        const j = (i + 1) % points.length;
+        area += points[i].x * points[j].y - points[j].x * points[i].y;
+    }
+    return Math.abs(area / 2);
+}
+
+function userScore(u_line,r_line){
+    let uArea;
+    let uline = extendLineToBorder(u_line, w, h);
+    let rline = extendLineToBorder(r_line, w, h);
+    let intersection = getIntersectionPoint(u_line,r_line,w,h);
+    if(intersection){
+        const polygon1 = [
+            { x: uline[0]['x'], y: uline[0]['y'] },
+            { x: intersection.x, y: intersection.y },
+            { x: rline[0]['x'], y: rline[0]['y'] }
+        ];
+        const polygon2 = [
+            { x: uline[1]['x'], y: uline[1]['y'] },
+            { x: intersection.x, y: intersection.y },
+            { x: rline[1]['x'], y: rline[1]['y'] }
+        ];
+        uArea = polygonArea(polygon1)+polygonArea(polygon2);
+    }else{
+        const polygon = [
+            { x: uline[0]['x'], y: uline[0]['y']},
+            { x: uline[1]['x'], y: uline[1]['y']},
+            { x: rline[1]['x'], y: rline[1]['y']},
+            { x: rline[0]['x'], y: rline[0]['y'] }
+        ];
+        uArea = polygonArea(polygon);
+    }
+    let tolerableArea = w*h/2;
+
+    let perc = (tolerableArea-uArea)/tolerableArea;
+    console.log('percentage:',perc);
+    return perc;
+}
+//
+// function userScore(u_line,r_line,centroid){
+//     if(u_line.length==0){
+//         return 0;
+//     }
+//     else{
+//
+//         // Calculate the line coefficients from the two points
+//         const a = u_line[1].y - u_line[0].y;
+//         const b = u_line[0].x - u_line[1].x;
+//         const c = u_line[1].x * u_line[0].y - u_line[0].x * u_line[1].y;
+//
+//         const center_dist = Math.abs(a * centroid.x + b * centroid.y + c) / Math.sqrt(a * a + b * b);
+//
+//         const slope_u = (u_line[1].y - u_line[0].y) / (u_line[1].x - u_line[0].x);
+//         const slope_r = (r_line[1].y - r_line[0].y) / (r_line[1].x - r_line[0].x);
+//
+//         const line_angle = Math.abs(Math.atan((slope_u - slope_r) / (1 + slope_u * slope_r))) * 180 / Math.PI;
+//
+//         // Constants to define the rate of decay
+//         // These can be adjusted to change how quickly the value decays
+//         // Calculate the decay for distance and degree
+//         const distDecay = logisitcFunction(center_dist,1,-0.15,100);
+//         const degreeDecay = logisitcFunction(line_angle,1,-0.08,45)
+//
+//         let multiplier = distDecay * degreeDecay;
+//         console.log("center distance",center_dist);
+//         console.log("distance decay",distDecay);
+//         console.log("line angle",line_angle);
+//         console.log("degree decay",degreeDecay);
+//         console.log("multiplier",multiplier);
+//         return multiplier;
+//     }
+// }
 
 function calculateCentroid(data) {
     let sumX = 0, sumY = 0;
@@ -489,19 +597,19 @@ $("#submit-result-btn" ).click(function() {
     userBehaviours["draw-line"] = userBehaviour.showResult();
     userBehaviour.stop();
 
-    let accuracy = parseFloat(userScore(userLineData, regLineData , visCentroid));
+    let accuracy = parseFloat(userScore(userLineData, regLineData));
     let final_res = (reward*accuracy).toFixed(1);
     let money = final_res*0.6/100+0.3
     money = Number(money.toFixed(2))
 
     // I set up the items in the previous page, pre_task.js, so it is initialized
-    let tPoints = JSON.parse(localStorage.getItem("totalDataUsed"));
+    let tPoints = JSON.parse(localStorage.getItem("DataUsed"));
     let uScores = JSON.parse(localStorage.getItem("userScores"));
     let fReward = JSON.parse(localStorage.getItem("finalReward"));
     let uAccu = JSON.parse(localStorage.getItem("taskAccu"));
 
     fReward = parseFloat(fReward);
-    tPoints+=d_total;
+    tPoints.push(d_total);
     uAccu.push(accuracy);
     uScores.push(parseFloat(final_res));
     fReward +=money;
@@ -509,22 +617,10 @@ $("#submit-result-btn" ).click(function() {
     localStorage.setItem("userScores",JSON.stringify(uScores));
     localStorage.setItem("finalReward",JSON.stringify(fReward));
     localStorage.setItem("taskAccu",JSON.stringify(uAccu));
-    localStorage.setItem("totalDataUsed",JSON.stringify(tPoints));
+    localStorage.setItem("DataUsed",JSON.stringify(tPoints));
 
     $("#notification").text("You've got "+final_res+" points and earned $"+money+", currently $"+fReward.toFixed(2)+" for all tasks! Click \"Next task\" to continue");
     console.log("User score: ", final_res);
-
-    if(parseInt(taskCnt)==5){
-        const tPoints = JSON.parse(localStorage.getItem("totalDataUsed"));
-        const uAccu = JSON.parse(localStorage.getItem("taskAccu"));
-        const averageAccu = uAccu.reduce((a,b)=>a+b)/uAccu.length;
-        console.log("tPoints:"+tPoints);
-        console.log("average accuracy:"+averageAccu);
-        if(tPoints<=60 || averageAccu<0.7){
-            window.location.href = "d_finish";
-            console.log("why are you returning?");
-        }
-    }
 
     if(parseInt(taskCnt) == samples.length) {
         $("#notification").text("You've earned $"+money.toFixed(2)+" and altogether $" + fReward.toFixed(2) + " for all tasks! Now Click \"Continue\" to continue");
