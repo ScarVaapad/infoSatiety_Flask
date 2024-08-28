@@ -77,7 +77,7 @@ let _d,xMin,xMax,yMin,yMax;
 
 // variables for adding data into the scatter plot
 // first, how many more data points will be revealed each time
-const d_reveal = 5;
+const d_reveal = 1;
 // then, how many data points are revealed in total
 let d_total = 0;
 
@@ -526,7 +526,7 @@ function drawCILine(_d){
 $("#add-more-btn").click(function(){
     $("#notification").text("Once you believed you've seen enough data, click on \"Draw the line\" to draw the trend")
     if(reward >=0){
-        reward -=2
+        reward -=0.5;
     }else{
         reward = 0;
     }

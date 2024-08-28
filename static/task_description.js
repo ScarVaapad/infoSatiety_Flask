@@ -17,7 +17,7 @@ let tutorial_images = [
 let tutorials_1 =[
     "In this study, you will be asked to use 8 interactive scatterplots to estimate trends.<br> <p> </p>"
     ,"Each of the starting scatterplots will be blank, like shown below. <br>There will be a button for you to request more data."
-    ,"You can request as many times as you like, but each request will cost you points. <br> <p> </p>"
+    ,"You can request as many times as you like and as fast as you like, but each request will cost you points. <br> <p> </p>"
     ,"Note that different datasets will have different trends, and some might not be obvious. <br> The goal is to decide when it is enough to be accurate."
     ,"Once you feel you've seen enough data, you can use the \"Draw the line\" button, <br> so you can start to draw the straight line that you believe represents all the data."
     ,"You can draw as many times as you like, no points will be deducted by drawing. <br> When you think your line fits the data, you can submit the result."

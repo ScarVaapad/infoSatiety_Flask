@@ -83,7 +83,7 @@ let _d,xMin,xMax,yMin,yMax;
 
 // variables for adding data into the scatter plot
 // first, how many more data points will be revealed each time
-const d_reveal = 5;
+const d_reveal = 1;
 // then, how many data points are revealed in total
 let d_total = 0;
 
@@ -541,7 +541,7 @@ function drawCILine(_d){
 $("#add-more-btn").click(function(){
     $("#notification").html("You can request more data by hitting \"Request more data\" button,<br> <b>Important: base points will be deducted upon request </b><br>Once you believed you've seen enough data, click on \"Draw the line\" to draw the trend")
     if(reward >=0){
-        reward -=2
+        reward -=0.5;
     }else{
         reward = 0;
     }
@@ -612,20 +612,26 @@ $("#submit-result-btn" ).click(function() {
     userBehaviours["draw-line"] = userBehaviour.showResult();
     userBehaviour.stop();
 
-    let final_res = reward * userScore(userLineData, regLineData);
+    let accuracy = userScore(userLineData, regLineData);
+    let final_res = reward * accuracy;
     let message1 = "";
     let message2 = "";
     let message3 = "";
-    if(isAngleTooWide || isDistanceTooLarge){
-        message1 ="To get higher points, consider spending more points";
-        message2 = "and request more data to make your estimation more accurate.";
+    if(accuracy<=0.75){
+        message1 ="To get higher points, consider requesting more data";
+        message2 = "so your estimation is more accurate.";
+    }
+    if(d_total>=25){
+        message1 ="To get higher points, consider requesting less data";
+        message2 = "as each request cost you certain points.";
     }
 
     $("#notification").html("You've got "+final_res.toFixed(2)+" points! "+message1+"<br>"+message2+"<br> Now Click \"Next practice\" to continue!")
     console.log("User score: ", final_res);
 
     if(parseInt(sampleCnt) == samples.length) {
-        $("#notification").html("You've got "+final_res.toFixed(2)+" points! "+message1+"<br><b>Important: Points, the correct line(blue) will no longer be shown in tasks.<br></b> Now Click \"To tasks\" to continue");
+        $("#instruction").html("<b>Important: Points(in grey) and the correct line(in blue) will no longer be shown in tasks.</b>")
+        $("#notification").html("You've got "+final_res.toFixed(2)+" points! "+message1+"<br>"+message2+"<br> Now Click \"To tasks\" to continue");
         $("#next-btn").text("To tasks");
     }
 });
@@ -634,7 +640,7 @@ $("#next-btn").click(function(){
     let results ={}
     results["request_behavior"] = userBehaviours["request-data"];
     results["data_points"] = d_total;
-    results["data_request_time"] = d_total/5;
+    results["data_request_time"] = d_total;
     results["draw_behavior"] = userBehaviours["draw-line"];
     results["centroid"] = visCentroid;
     results["regLineData"] = regLineData;
