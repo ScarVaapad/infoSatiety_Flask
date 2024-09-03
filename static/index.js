@@ -12,6 +12,6 @@ $(document).ready(function(){
 $( "#start-button" ).click(function(e) {
 
 
-    window.location.href = "pre_miniVlat"
+    window.location.href = "pre_task"
     // window.location.href = "information.html?task="+taskNum+"&cnt=0&color="+colorSelected;
 });

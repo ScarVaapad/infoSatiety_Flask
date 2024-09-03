@@ -77,9 +77,9 @@ let _d,xMin,xMax,yMin,yMax;
 
 // variables for adding data into the scatter plot
 // first, how many more data points will be revealed each time
-const d_reveal = 2;
+const d_reveal = 0;
 // then, how many data points are revealed in total
-let d_total = 0;
+let d_total = 150;
 
 
 // variables for drawing
@@ -642,7 +642,7 @@ $("#next-btn").click(function(){
 
     //and if count is 3, submitting will result into the next page
     if (parseInt(taskCnt) == samples.length){
-        window.location.href = "post_task";
+        window.location.href = "questionnaire";
     }else{
         taskCnt=parseInt(taskCnt)+1;
         permutationCnt = parseInt(permutationCnt)+1;
