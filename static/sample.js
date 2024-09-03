@@ -83,7 +83,7 @@ let _d,xMin,xMax,yMin,yMax;
 
 // variables for adding data into the scatter plot
 // first, how many more data points will be revealed each time
-const d_reveal = 1;
+const d_reveal = 2;
 // then, how many data points are revealed in total
 let d_total = 0;
 
@@ -541,7 +541,7 @@ function drawCILine(_d){
 $("#add-more-btn").click(function(){
     $("#notification").html("You can request more data by hitting \"Request more data\" button,<br> <b>Important: base points will be deducted upon request </b><br>Once you believed you've seen enough data, click on \"Draw the line\" to draw the trend")
     if(reward >=0){
-        reward -=0.5;
+        reward -=1.5;
     }else{
         reward = 0;
     }
@@ -614,24 +614,24 @@ $("#submit-result-btn" ).click(function() {
 
     let accuracy = userScore(userLineData, regLineData);
     let final_res = reward * accuracy;
-    let message1 = "";
-    let message2 = "";
+    let message1 = " Your score is dependent on your accuracy and how much data you have used.";
+    let message2 = "You need to decide when it is enough for you to make the decision";
     let message3 = "";
-    if(accuracy<=0.75){
-        message1 ="To get higher points, consider requesting more data";
-        message2 = "so your estimation is more accurate.";
-    }
-    if(d_total>=25){
-        message1 ="To get higher points, consider requesting less data";
-        message2 = "as each request cost you certain points.";
-    }
+    // if(accuracy<=0.75){
+    //     message1 ="To get higher points, consider requesting more data";
+    //     message2 = "so your estimation is more accurate.";
+    // }
+    // if(d_total>=25){
+    //     message1 ="To get higher points, consider requesting less data";
+    //     message2 = "as each request cost you certain points.";
+    // }
 
-    $("#notification").html("You've got "+final_res.toFixed(2)+" points! "+message1+"<br>"+message2+"<br> Now Click \"Next practice\" to continue!")
+    $("#notification").html(message1+"<br>"+message2+"<br> You've got "+final_res.toFixed(2)+" points! Now Click \"Next practice\" to continue!")
     console.log("User score: ", final_res);
 
     if(parseInt(sampleCnt) == samples.length) {
         $("#instruction").html("<b>Important: Points(in grey) and the correct line(in blue) will no longer be shown in tasks.</b>")
-        $("#notification").html("You've got "+final_res.toFixed(2)+" points! "+message1+"<br>"+message2+"<br> Now Click \"To tasks\" to continue");
+        $("#notification").html(message1+"<br>"+message2+"<br> You've got "+final_res.toFixed(2)+" points! Now Click \"To tasks\" to continue");
         $("#next-btn").text("To tasks");
     }
 });
@@ -690,7 +690,10 @@ $(document).ready(function(){
             },
         }
     );
-    userBehaviour.start();
+
+    setTimeout(function() {
+        userBehaviour.start();
+    }, 100); // 0.1 seconds delay
 });
 
 // var downloadTimer = setInterval(function(){
