@@ -79,7 +79,7 @@ let _d,xMin,xMax,yMin,yMax;
 // first, how many more data points will be revealed each time
 const d_reveal = 0;
 // then, how many data points are revealed in total
-let d_total = 150;
+let d_total = 250;
 
 
 // variables for drawing
@@ -376,7 +376,8 @@ function updateChart(_d,num){
             } else {
                 return "Blue"; // Color for new data points
             }
-        });
+        })
+        .style("opacity", 0.5);
     //showLine(d);
     }else{//if all data points are shown, then all data points are grey, allowing user to see the regression line in yellow?
         margin_svg.append('g')
