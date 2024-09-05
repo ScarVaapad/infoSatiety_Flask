@@ -16,7 +16,39 @@ mountPath = 'data/data.csv'
 # Hard coded schema for data logging in case localStorage pass extra lines other than intended ones and possible random order of items
 # schema = ['task_4', 'Personality', 'Demographic', 'tutorial_1', 'assignmentId', 'task_8', 'task_3', 'participantId', 'tutorial_2', 'task_5', 'tutorial_3', 'minivlat_score', 'projectId', 'task_6', 'task_2', 'task_1', 'userScores', 'Post_Task_Q', 'task_7', 'finalReward']
 # new schema for new data recording
-schema = ['task_4', 'Personality', 'Demographic', 'tutorial_1', 'assignmentId', 'taskAccu', 'task_8', 'task_3', 'participantId', 'tutorial_2', 'task_5', 'minivlat_score', 'projectId', 'tutorial_3', 'task_6', 'DataUsed', 'task_1', 'task_2', 'userScores', 'Post_Task_Q', 'task_7', 'finalReward']
+# schema = ['task_4', 'Personality', 'task2_5', 'Demographic', 'tutorial_1', 'task2_3', 'assignmentId', 'taskAccu', 'task2_4', 'task_8', 'task_3', 'task2_8', 'task2_1', 'participantId', 'tutorial_2', 'task_5', 'minivlat_score', 'DataUsed', 'projectId', 'tutorial_3', 'task_6', 'task_1', 'task_2', 'task2_6', 'task2_2', 'task2_7', 'userScores', 'Post_Task_Q', 'task_7', 'finalReward']
+schema =[
+    'tutorial_1',
+    'tutorial_2',
+    'tutorial_3',
+    'task_1',
+    'task_2',
+    'task_3',
+    'task_4',
+    'task_5',
+    'task_6',
+    'task_7',
+    'task_8',
+    'task2_1',
+    'task2_2',
+    'task2_3',
+    'task2_4',
+    'task2_5',
+    'task2_6',
+    'task2_7',
+    'task2_8',
+    'Demographic',
+    'Personality',
+    'minivlat_score',
+    'Post_Task_Q',
+    'assignmentId',
+    'projectId',
+    'DataUsed',
+    'userScores',
+    'taskAccu',
+    'participantId',
+    'finalReward'
+]
 global_lock = threading.Lock()
 def safe_write_csv(json_data):
     file_exists = os.path.isfile(mountPath)
@@ -99,6 +131,16 @@ def task():
     task_cnt = request.args.get('taskCnt')
     permutationcnt = request.args.get('permutationcnt')
     return render_template('/task.html', taskCnt=task_cnt,permutationcnt=permutationcnt)
+
+@app.route("/task2")
+def task2():
+    task_cnt = request.args.get('taskCnt')
+    permutationcnt = request.args.get('permutationcnt')
+    return render_template('/task2.html', taskCnt=task_cnt,permutationcnt=permutationcnt)
+
+@app.route("/transit_task2")
+def transit_task2():
+    return render_template(('/transit_task2.html'))
 
 @app.route("/post_task")
 def post_task():

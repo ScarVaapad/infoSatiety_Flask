@@ -12,15 +12,20 @@
         <div class="col"></div>
         <div class="col-10 h-75" style="background-color: #eee; border-radius: 20px; padding: 20px;">
             <div class="d-flex justify-content-center" style="padding-top: 15px;">
-                <h3>Core Tasks</h3>
+                <h3>Calibration Tasks</h3>
             </div>
-            <div class="d-flex justify-content-center" style="height: 85%; padding-left: 10px; padding-bottom: 10px; padding-top: 20px;">
-                <p>Now you will be directed to the tasks for this study. The answers won't be shown for tasks.</p>
-
+            <div class="justify-content-center overflow-auto" style="height: 85%; padding-left: 40px; padding-bottom: 40px; padding-top: 20px;">
+                <p>In this phase is called <b>"Calibration Tasks"</b>, which contains 8 tasks that are mostly similar to <b>"Core Tasks"</b>:</p>
+                <ul>
+                    <li>Instead, you will click on <b>"Show data"</b> once, and system will present you "enough" data points.</li>
+                    <li>Please click on <b>"Draw the line"</b> to draw your best prediction(s).</li>
+                </ul>
+                <p>You will be compensated for 0.3 for each task.</p>
+                <p>Once you are ready, please click "To tasks" to start.</p>
             </div>
 
-            <div class="d-flex justify-content-center" style="padding-left: 10px; padding-bottom: 10px; padding-top: 20px; ">
-                <button type="button" id="start-button"  class="btn btn-primary" style="width: 340px;">Start Tasks</button>
+            <div class="d-flex justify-content-center" style="padding-left: 10px; padding-bottom: 10px; padding-top: 0px; ">
+                <button type="button" id="start-button"  class="btn btn-primary" style="width: 340px;">To tasks</button>
             </div>
 
         </div>
@@ -33,6 +38,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://unpkg.com/simple-statistics@7.8.3/dist/simple-statistics.min.js"></script>
-<script type="module" src="{{url_for('static',filename='pre_task.js')}}" ></script>
+<script type="module" src="{{url_for('static',filename='transit_task2.js')}}" ></script>
 </body>
 </html>

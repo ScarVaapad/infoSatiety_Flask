@@ -52,8 +52,8 @@ let visCentroid; // when centroid of the data is calculated, also calculate the 
 // let directory='./asset/Examples/';
 // let samples = ['s01_cor@0.5_m@1.5_b@0.5.csv','s02_cor@0.2_m@0.8_b@-0.8.csv','s03_cor@0.9_m@-1.8_b@-0.5.csv']
 let directory='/static/Tasks/';
-let samples = ['cor0.3.csv','cor0.8.csv','cor0.3.csv','cor0.8.csv','cor0.8.csv','cor0.3.csv','cor0.8.csv','cor0.3.csv'];
-let permutations = [{'r':0,'m_x':0,'m_y':0},{'r':90,'m_x':-0.5,'m_y':0},{'r':180,'m_x':-0.4,'m_y':-0.2},{'r':270,'m_x':-0.3,'m_y':0.3},{'r':0,'m_x':0,'m_y':0},{'r':90,'m_x':-0.5,'m_y':0},{'r':180,'m_x':-0.4,'m_y':-0.2},{'r':270,'m_x':-0.3,'m_y':0.3}];
+let samples = ['cor0.8.csv','cor0.3.csv','cor0.3.csv','cor0.8.csv','cor0.3.csv','cor0.3.csv','cor0.8.csv','cor0.8.csv'];
+let permutations = [{'r':15,'m_x':0,'m_y':0.5},{'r':60,'m_x':-0.5,'m_y':0.2},{'r':105,'m_x':0.4,'m_y':-0.6},{'r':135,'m_x':0.3,'m_y':-0.3},{'r':90,'m_x':0,'m_y':0},{'r':180,'m_x':-0.5,'m_y':0},{'r':270,'m_x':-0.4,'m_y':-0.2},{'r':0,'m_x':-0.3,'m_y':0.3}];
 // let samples = ['cor0.1.csv','cor0.2.csv','cor0.3.csv','cor0.4.csv','cor0.5.csv','cor0.6.csv','cor0.7.csv','cor0.8.csv','cor0.9.csv'];
 
 // TEST: read all files and print the ranges
@@ -524,14 +524,15 @@ function drawCILine(_d){
 
 //Button function to add more data to the scatterplot
 $("#add-more-btn").click(function(){
-    $("#notification").text("Once you believed you've seen enough data, click on \"Draw the line\" to draw the trend")
+    $("#add-more-btn").prop('disabled', true).css('background-color', 'grey');
+    $("#notification").text("Please click on \"Draw the line\" to draw the trend")
     if(reward >=0){
         reward -=1.5;
     }else{
         reward = 0;
     }
     d_total += d_reveal;
-    updateChart(_d,d_total);
+    updateChart(_d,250);
 });
 
 //Draw line button
@@ -599,27 +600,27 @@ $("#submit-result-btn" ).click(function() {
 
     let accuracy = parseFloat(userScore(userLineData, regLineData));
     let final_res = (reward*accuracy).toFixed(1);
-    let money = final_res*0.6/100
+    let money = 0.3
     money = Number(money.toFixed(2))
 
     // I set up the items in the previous page, pre_task.js, so it is initialized
-    let tPoints = JSON.parse(localStorage.getItem("DataUsed"));
-    let uScores = JSON.parse(localStorage.getItem("userScores"));
+    // let tPoints = JSON.parse(localStorage.getItem("DataUsed"));
+    // let uScores = JSON.parse(localStorage.getItem("userScores"));
     let fReward = JSON.parse(localStorage.getItem("finalReward"));
     let uAccu = JSON.parse(localStorage.getItem("taskAccu"));
 
     fReward = parseFloat(fReward);
-    tPoints.push(d_total);
+    // tPoints.push(d_total);
     uAccu.push(accuracy);
-    uScores.push(parseFloat(final_res));
+    // uScores.push(parseFloat(final_res));
     fReward +=money;
     fReward = Number(fReward.toFixed(2))
-    localStorage.setItem("userScores",JSON.stringify(uScores));
+    // localStorage.setItem("userScores",JSON.stringify(uScores));
     localStorage.setItem("finalReward",JSON.stringify(fReward));
     localStorage.setItem("taskAccu",JSON.stringify(uAccu));
-    localStorage.setItem("DataUsed",JSON.stringify(tPoints));
+    // localStorage.setItem("DataUsed",JSON.stringify(tPoints));
 
-    $("#notification").text("You've got "+final_res+" points and earned $"+money+", currently $"+fReward.toFixed(2)+" for all tasks! Click \"Next task\" to continue");
+    $("#notification").text("You've earned $"+money+", currently $"+fReward.toFixed(2)+" for all tasks! Click \"Next task\" to continue");
     console.log("User score: ", final_res);
 
     if(parseInt(taskCnt) == samples.length) {
@@ -638,15 +639,15 @@ $("#next-btn").click(function(){
     results["regLineData"] = regLineData;
     results["userLineData"] = userLineData;
 
-    localStorage.setItem("task_"+taskCnt.toString(), JSON.stringify(results));
+    localStorage.setItem("task2_"+taskCnt.toString(), JSON.stringify(results));
 
     //and if count is 3, submitting will result into the next page
     if (parseInt(taskCnt) == samples.length){
-        window.location.href = "transit_task2";
+        window.location.href = "post_task";
     }else{
         taskCnt=parseInt(taskCnt)+1;
         permutationCnt = parseInt(permutationCnt)+1;
-        let address = "task?taskCnt="+taskCnt.toString()+"&permutationcnt="+permutationCnt.toString();
+        let address = "task2?taskCnt="+taskCnt.toString()+"&permutationcnt="+permutationCnt.toString();
         window.location.href = address;
     }
 });
@@ -661,9 +662,9 @@ $(document).ready(function(){
         }
     }
     genChart();
-    $("#progress-txt").text("Core Task "+taskCnt+" out of the 8");
+    $("#progress-txt").text("Calibration Task "+taskCnt+" out of the 8");
     $("#slider-control").hide();//pause the slider as we don't use it in our tasks.
-    $("#add-more-btn").show();
+    $("#add-more-btn").show();// For task 2, hide the add button, instead, just give them 250 data points by updateChart()
     $("#draw-line-btn").show();
     $("#submit-result-btn").hide();
     $("#next-btn").hide();
