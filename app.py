@@ -165,7 +165,7 @@ def finish():
 
 @app.route("/lafin")
 def lafin():
-    return redirect("https://connect.cloudresearch.com/participant/project/C733AD78DC/complete");
+    return redirect("https://connect.cloudresearch.com/participant/project/23A3D78420/complete");
 
 @app.route("/d_finish")
 def d_finish():
