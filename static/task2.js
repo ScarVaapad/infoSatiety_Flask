@@ -577,55 +577,59 @@ $("#draw-line-btn").click(function(){
 });
 //Need to be reimplented
 $("#submit-result-btn" ).click(function() {
-    //Give answers to participants
-    // first, show all data points on scatterplot
+    // Check whether the line is properly drawn: userLineData.length == 2
+    if(userLineData.length==2){
+        svg.on("mousedown",null);
+        svg.on("mousemove",null);
+        svg.on("mouseup",null);
+        //pass the data to the database
 
-    svg.on("mousedown",null);
-    svg.on("mousemove",null);
-    svg.on("mouseup",null);
-    //pass the data to the database
+        // updateChart(_d,_d.length);
+        // then, show the regression line of the scatterplot
+        showLine(_d);
+        // drawCILine(_d);
+        $("#submit-result-btn").hide();
+        $("#next-btn").show();
 
-    // updateChart(_d,_d.length);
-    // then, show the regression line of the scatterplot
-    showLine(_d);
-    // drawCILine(_d);
-    $("#submit-result-btn").hide();
-    $("#next-btn").show();
-
-    // show the reward
+        // show the reward
 
 
-    userBehaviours["draw-line"] = userBehaviour.showResult();
-    userBehaviour.stop();
+        userBehaviours["draw-line"] = userBehaviour.showResult();
+        userBehaviour.stop();
 
-    let accuracy = parseFloat(userScore(userLineData, regLineData));
-    let final_res = (reward*accuracy).toFixed(1);
-    let money = 0.3
-    money = Number(money.toFixed(2))
+        let accuracy = parseFloat(userScore(userLineData, regLineData));
+        let final_res = (reward*accuracy).toFixed(1);
+        let money = final_res*0.6/100
+        money = Number(money.toFixed(2))
 
-    // I set up the items in the previous page, pre_task.js, so it is initialized
-    // let tPoints = JSON.parse(localStorage.getItem("DataUsed"));
-    // let uScores = JSON.parse(localStorage.getItem("userScores"));
-    let fReward = JSON.parse(localStorage.getItem("finalReward"));
-    let uAccu = JSON.parse(localStorage.getItem("taskAccu"));
+        // I set up the items in the previous page, pre_task.js, so it is initialized
+        let tPoints = JSON.parse(localStorage.getItem("DataUsed"));
+        let uScores = JSON.parse(localStorage.getItem("userScores"));
+        let fReward = JSON.parse(localStorage.getItem("finalReward"));
+        let uAccu = JSON.parse(localStorage.getItem("taskAccu"));
 
-    fReward = parseFloat(fReward);
-    // tPoints.push(d_total);
-    uAccu.push(accuracy);
-    // uScores.push(parseFloat(final_res));
-    fReward +=money;
-    fReward = Number(fReward.toFixed(2))
-    // localStorage.setItem("userScores",JSON.stringify(uScores));
-    localStorage.setItem("finalReward",JSON.stringify(fReward));
-    localStorage.setItem("taskAccu",JSON.stringify(uAccu));
-    // localStorage.setItem("DataUsed",JSON.stringify(tPoints));
+        fReward = parseFloat(fReward);
+        tPoints.push(d_total);
+        uAccu.push(accuracy);
+        uScores.push(parseFloat(final_res));
+        fReward +=money;
+        fReward = Number(fReward.toFixed(2))
+        localStorage.setItem("userScores",JSON.stringify(uScores));
+        localStorage.setItem("finalReward",JSON.stringify(fReward));
+        localStorage.setItem("taskAccu",JSON.stringify(uAccu));
+        localStorage.setItem("DataUsed",JSON.stringify(tPoints));
 
-    $("#notification").text("You've earned $"+money+", currently $"+fReward.toFixed(2)+" for all tasks! Click \"Next task\" to continue");
-    console.log("User score: ", final_res);
+        $("#notification").text("You've got "+final_res+" points and earned $"+money+", currently $"+fReward.toFixed(2)+" for all tasks! Click \"Next task\" to continue");
+        console.log("User score: ", final_res);
 
-    if(parseInt(taskCnt) == samples.length) {
-        $("#notification").text("You've earned $"+money.toFixed(2)+" and altogether $" + fReward.toFixed(2) + " for all tasks! Now Click \"Continue\" to continue");
-        $("#next-btn").text("Continue");
+        if(parseInt(taskCnt) == samples.length) {
+            $("#notification").text("You've earned $"+money.toFixed(2)+" and altogether $" + fReward.toFixed(2) + " for all tasks! Now Click \"Continue\" to continue");
+            $("#next-btn").text("Continue");
+        }
+
+    }
+    else{
+        alert("Please draw a proper trend line");
     }
 
 });
