@@ -539,7 +539,8 @@ $("#add-more-btn").click(function(){
 $("#draw-line-btn").click(function(){
 //user can only draw one line once, and adjust the end points
     //user line data stored as global variable: userLineData
-    $("#notification").text("Once you are satisfied with your line, click \"Submit\" to proceed")
+    updateChart(_d,250);
+    $("#notification").text("Once you are satisfied with your line, click \"Submit\" to proceed");
 
     userBehaviours["request-data"] = userBehaviour.showResult();
     userBehaviour.stop();
@@ -577,8 +578,9 @@ $("#draw-line-btn").click(function(){
 });
 //Need to be reimplented
 $("#submit-result-btn" ).click(function() {
-    // Check whether the line is properly drawn: userLineData.length == 2
     if(userLineData.length==2){
+        //Give answers to participants
+        // first, show all data points on scatterplot
         svg.on("mousedown",null);
         svg.on("mousemove",null);
         svg.on("mouseup",null);
@@ -599,34 +601,33 @@ $("#submit-result-btn" ).click(function() {
 
         let accuracy = parseFloat(userScore(userLineData, regLineData));
         let final_res = (reward*accuracy).toFixed(1);
-        let money = final_res*0.6/100
+        let money = 0.3
         money = Number(money.toFixed(2))
 
         // I set up the items in the previous page, pre_task.js, so it is initialized
-        let tPoints = JSON.parse(localStorage.getItem("DataUsed"));
-        let uScores = JSON.parse(localStorage.getItem("userScores"));
+        // let tPoints = JSON.parse(localStorage.getItem("DataUsed"));
+        // let uScores = JSON.parse(localStorage.getItem("userScores"));
         let fReward = JSON.parse(localStorage.getItem("finalReward"));
         let uAccu = JSON.parse(localStorage.getItem("taskAccu"));
 
         fReward = parseFloat(fReward);
-        tPoints.push(d_total);
+        // tPoints.push(d_total);
         uAccu.push(accuracy);
-        uScores.push(parseFloat(final_res));
+        // uScores.push(parseFloat(final_res));
         fReward +=money;
         fReward = Number(fReward.toFixed(2))
-        localStorage.setItem("userScores",JSON.stringify(uScores));
+        // localStorage.setItem("userScores",JSON.stringify(uScores));
         localStorage.setItem("finalReward",JSON.stringify(fReward));
         localStorage.setItem("taskAccu",JSON.stringify(uAccu));
-        localStorage.setItem("DataUsed",JSON.stringify(tPoints));
+        // localStorage.setItem("DataUsed",JSON.stringify(tPoints));
 
-        $("#notification").text("You've got "+final_res+" points and earned $"+money+", currently $"+fReward.toFixed(2)+" for all tasks! Click \"Next task\" to continue");
+        $("#notification").text("You've earned $"+money+", currently $"+fReward.toFixed(2)+" for all tasks! Click \"Next task\" to continue");
         console.log("User score: ", final_res);
 
         if(parseInt(taskCnt) == samples.length) {
             $("#notification").text("You've earned $"+money.toFixed(2)+" and altogether $" + fReward.toFixed(2) + " for all tasks! Now Click \"Continue\" to continue");
             $("#next-btn").text("Continue");
         }
-
     }
     else{
         alert("Please draw a proper trend line");
@@ -668,7 +669,7 @@ $(document).ready(function(){
     genChart();
     $("#progress-txt").text("Calibration Task "+taskCnt+" out of the 8");
     $("#slider-control").hide();//pause the slider as we don't use it in our tasks.
-    $("#add-more-btn").show();// For task 2, hide the add button, instead, just give them 250 data points by updateChart()
+    $("#add-more-btn").hide();// For task 2, hide the add button, instead, just give them 250 data points by updateChart()
     $("#draw-line-btn").show();
     $("#submit-result-btn").hide();
     $("#next-btn").hide();
