@@ -77,9 +77,9 @@ let _d,xMin,xMax,yMin,yMax;
 
 // variables for adding data into the scatter plot
 // first, how many more data points will be revealed each time
-const d_reveal = 0;
+const d_reveal = 2;
 // then, how many data points are revealed in total
-let d_total = 250;
+let d_total = 0;
 
 
 // variables for drawing
