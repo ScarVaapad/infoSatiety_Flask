@@ -73,7 +73,7 @@ const margin_svg = svg.append("g")
 
 let x,y; // scales for the scatter plot
 let _d,xMin,xMax,yMin,yMax;
-
+let d_svg; //use it to record the points transited by xScale and yScale --> for calculation of best fit
 
 // variables for adding data into the scatter plot
 // first, how many more data points will be revealed each time
@@ -103,8 +103,35 @@ function logisitcFunction(x,L=1,k=1,x0=0){
     return L/(1+Math.exp(-k*(x-x0)));
 }
 
+// Attempt to use rSquare to measure 'accuracy'
+// function fScore(u,r,d){
+//     function rsq(line, data){
+//
+//         const x = data.map(d => d[0]);
+//         const y = data.map(d => d[1]);
+//
+//         const transformedData = line.map(obj => Object.values(obj));
+//         console.log(transformedData);
+//         const _line = ss.linearRegressionLine(ss.linearRegression(trans));
+//
+//         // Calculate the predicted y values
+//         const yPredicted = x.map(_line);
+//
+//         // Calculate the R-squared value
+//         const rSquared = ss.rSquared(y, yPredicted);
+//
+//         return rSquared;
+//     }
+//     const u_rsq = rsq(u,d);
+//     const r_rsq = rsq(r,d);
+//     console.log("user line rSquared:",u_rsq);
+//     console.log("regression line rSquared:",r_rsq);
+//
+//     return u_rsq/r_rsq;
+// }
 // Using area to calculate the 'distance'
 // 1. extend the line to the borders
+
 function extendLineToBorder(line, svgWidth, svgHeight) {
     const x1 = line[0].x;
     const y1 = line[0].y;
@@ -243,6 +270,139 @@ function userScore(u_line,r_line){
 //         return multiplier;
 //     }
 // }
+
+// Attempt to use circle method to calculate the area then the accuracy
+function cScore(userLine,regLine,centroid,radius){//userLine regressionLine centroid
+    //circle is imaginary, wonderful
+    function getLineEquation(x1, y1, x2, y2) {
+        const A = y2 - y1;
+        const B = x1 - x2;
+        const C = x2 * y1 - x1 * y2;
+        return { A, B, C };
+    }
+
+    function getCircleLineIntersections(circle, line) {
+        const cx=circle.x0, cy=circle.y0, r=circle.radius;
+        const { A, B, C } = getLineEquation(line[0]['x'], line[0]['y'], line[1]['x'], line[1]['y']);
+
+        const a = A * A + B * B;
+        const b = 2 * (A * C + A * B * cy - B * B * cx);
+        const c = C * C + 2 * B * C * cy + B * B * (cx * cx + cy * cy - r * r);
+
+        const discriminant = b * b - 4 * a * c;
+
+        if (discriminant < 0) {
+            return []; // No intersection
+        }
+
+        const x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+        const y1 = (-A * x1 - C) / B;
+
+        const x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+        const y2 = (-A * x2 - C) / B;
+
+        return [{ x: x1, y: y1 }, { x: x2, y: y2 }];
+    }
+
+    function linesIntersect(line1, line2) {//here is for regLine and userLine extended at the circle
+        const x1=line1[0]['x'], y1=line1[0]['y'], x2=line1[1]['x'], y2=line1[1]['y'];
+        const x3=line2[0]['x'], y3=line2[0]['y'], x4=line2[1]['x'], y4=line2[1]['y'];
+
+        const denominator = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+        if (denominator === 0) {
+            return false; // Lines are parallel
+        }
+
+        const ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denominator;
+        const ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denominator;
+
+        if (ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1) {
+            const intersectionX = x1 + ua * (x2 - x1);
+            const intersectionY = y1 + ua * (y2 - y1);
+            return { x: intersectionX, y: intersectionY };
+        }
+
+        return null;
+    }
+
+    function calAngle(x0, y0, x1, y1, x2, y2) {
+        const vector1 = { x: x1 - x0, y: y1 - y0 };
+        const vector2 = { x: x2 - x0, y: y2 - y0 };
+
+        const dotProduct = vector1.x * vector2.x + vector1.y * vector2.y;
+        const magnitude1 = Math.sqrt(vector1.x * vector1.x + vector1.y * vector1.y);
+        const magnitude2 = Math.sqrt(vector2.x * vector2.x + vector2.y * vector2.y);
+
+        const cosTheta = dotProduct / (magnitude1 * magnitude2);
+        const theta = Math.acos(cosTheta);
+
+        return theta; // Angle in radians
+    }
+
+    function minorSegArea(x1, y1, x0, y0, x2, y2){
+        // Calculate the radius
+        const r = radius;
+
+        // Calculate the angle θ in radians
+        const cosTheta = ((x1 - x0) * (x2 - x0) + (y1 - y0) * (y2 - y0)) / (r ** 2);
+        const theta = Math.acos(cosTheta);
+
+        // Calculate the area of the sector
+        const sectorArea = 0.5 * r ** 2 * theta;
+
+        // Calculate the area of the triangle
+        const triangleArea = 0.5 * Math.abs(x1 * (y2 - y0) + x2 * (y0 - y1) + x0 * (y1 - y2));
+
+        // Calculate the area of the minor segment
+        const minorSegmentArea = sectorArea - triangleArea;
+
+        return minorSegmentArea;
+    }
+
+    function polygonArea(points) {
+        let area = 0;
+        for (let i = 0; i < points.length; i++) {
+            const j = (i + 1) % points.length;
+            area += points[i].x * points[j].y - points[j].x * points[i].y;
+        }
+        return Math.abs(area / 2);
+    }
+
+    const x0 = centroid.x+60,y0=centroid.y+10;// hard coded left and top padding.
+    const circle ={x0,y0,radius};
+
+    const L_u = getCircleLineIntersections(circle,userLine);
+    if(L_u.length==0){
+        return 0;
+    }else{
+        const L_r = getCircleLineIntersections(circle,regLine);
+        const intersect = linesIntersect(L_u,L_r);
+        if(intersect){//if there is intersect, calculate two acute angle piece
+            let x1=L_u[0].x,y1=L_u[0].y;
+            let x2=L_u[1].x,y2=L_u[1].y;
+            let x3=L_r[0].x,y3=L_r[0].y;
+            let x4=L_r[1].x,y4=L_r[1].y;
+            let xi=intersect.x,yi=intersect.y;
+            let res=0;
+            if(calAngle(x0,y0,x1,y1,x3,y3)<Math.PI/2){
+                res = polygonArea([{x:xi,y:yi}, {x:x1, y:y1}, {x:x3, y:y3}])+polygonArea([{x:xi,y:yi}, {x:x2, y:y2}, {x:x4, y:y4}]);
+                res+=minorSegArea(x1,y1,x0,y0,x3,y3);
+                res+=minorSegArea(x2,y2,x0,y0,x4,y4);
+            }else{
+                res = polygonArea([{x:xi,y:yi}, {x:x1, y:y1}, {x:x4, y:y4}])+polygonArea([{x:xi,y:yi}, {x:x2, y:y2}, {x:x3, y:y3}]);
+                res+=minorSegArea(x1,y1,x0,y0,x4,y4);
+                res+=minorSegArea(x2,y2,x0,y0,x3,y3);
+            }
+            return res/(Math.PI*radius**2/2);
+        }else{
+            let x1=L_u[0].x,y1=L_u[0].y;
+            let x2=L_u[1].x,y2=L_u[1].y;
+
+            const msA = minorSegArea(x1,y1,x0,y0,x2,y2)
+            return msA/(Math.PI*radius**2/2);
+        }
+    }
+}
 
 function calculateCentroid(data) {
     let sumX = 0, sumY = 0;
@@ -400,6 +560,7 @@ function showLine(_d){
     const x_values = _d.map(d => x(d.x));
     const y_values = _d.map(d => y(d.y));
     let points = d3.zip(x_values, y_values);
+    d_svg = points;
     let regline = ss.linearRegression(points);
     // console.log(points);
     // console.log(regline);
@@ -419,7 +580,7 @@ function showLine(_d){
     margin_svg.append("path") // Draw the regression line
         .datum(reg_line_data)
         .attr("fill", "none")
-        .attr("stroke", "white")
+        .attr("stroke", "Blue")
         .attr("stroke-opacity",0)
         .attr("stroke-width", 2.5)
         .attr("d", line)
@@ -526,7 +687,7 @@ function drawCILine(_d){
 $("#add-more-btn").click(function(){
     $("#notification").text("Once you believed you've seen enough data, click on \"Draw the line\" to draw the trend")
     if(reward >=0){
-        reward -=1.5;
+        reward -=2;
     }else{
         reward = 0;
     }
@@ -597,6 +758,8 @@ $("#submit-result-btn" ).click(function() {
         userBehaviours["draw-line"] = userBehaviour.showResult();
         userBehaviour.stop();
 
+ //       let accuracy2 = parseFloat(fScore(userLineData,regLineData,d_svg));
+        let accuracy3 = parseFloat(cScore(userLineData,regLineData,visCentroid,width/2));
         let accuracy = parseFloat(userScore(userLineData, regLineData));
         let final_res = (reward*accuracy).toFixed(1);
         let money = final_res*0.6/100
@@ -610,7 +773,7 @@ $("#submit-result-btn" ).click(function() {
 
         fReward = parseFloat(fReward);
         tPoints.push(d_total);
-        uAccu.push(accuracy);
+        uAccu.push(accuracy); // switch this!!
         uScores.push(parseFloat(final_res));
         fReward +=money;
         fReward = Number(fReward.toFixed(2))
