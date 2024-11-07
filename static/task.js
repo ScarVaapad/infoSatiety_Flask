@@ -273,134 +273,237 @@ function userScore(u_line,r_line){
 
 // Attempt to use circle method to calculate the area then the accuracy
 function cScore(userLine,regLine,centroid,radius){//userLine regressionLine centroid
-    //circle is imaginary, wonderful
-    function getLineEquation(x1, y1, x2, y2) {
-        const A = y2 - y1;
-        const B = x1 - x2;
-        const C = x2 * y1 - x1 * y2;
-        return { A, B, C };
+    function ex2circle(line,centroid,radius){
+        let r = radius;
+        // Extract points from the line
+        let x1 = line[0].x, y1 = line[0].y;
+        let x2 = line[1].x, y2 = line[1].y;
+
+        // Extract centroid coordinates (a, b)
+        let a = centroid.x, b = centroid.y;
+
+        // Acquire line formula in form of y = mx + c
+        let m = (y2 - y1) / (x2 - x1);
+        let c = -m * x1 + y1; // From y - y1 = m(x - x1)
+
+        // Circle formula: (x - a)^2 + (y - b)^2 = r^2
+        // Substitute y for mx + c then expand it to the form of Ax^2 + Bx + C = 0
+
+        // Calculate the coefficients of the line equation Ax + By + C = 0
+        let A = m * m + 1;
+        let B = -2 * a + 2 * m * (c - b);
+        let C = a * a + (c - b) * (c - b) - r * r;
+
+        // Judge whether line intersects with circle
+        let delta = B * B - 4 * A * C;
+        if (delta <= 0) {
+            return null;
+        } else {
+            let _x1 = (-B - Math.sqrt(B * B - 4 * A * C)) / (2 * A);
+            let _x2 = (-B + Math.sqrt(B * B - 4 * A * C)) / (2 * A);
+            let _y1 = m * _x1 + c;
+            let _y2 = m * _x2 + c;
+
+            let intersection1 = { x: _x1, y: _y1 };
+            let intersection2 = { x: _x2, y: _y2 };
+            return [intersection1, intersection2];
+        }
     }
 
-    function getCircleLineIntersections(circle, line) {
-        const cx=circle.x0, cy=circle.y0, r=circle.radius;
-        const { A, B, C } = getLineEquation(line[0]['x'], line[0]['y'], line[1]['x'], line[1]['y']);
+    function get_line_intersection(line1, line2) {
+        // Extract points from the lines
+        let x1 = line1[0].x, y1 = line1[0].y;
+        let x2 = line1[1].x, y2 = line1[1].y;
 
-        const a = A * A + B * B;
-        const b = 2 * (A * C + A * B * cy - B * B * cx);
-        const c = C * C + 2 * B * C * cy + B * B * (cx * cx + cy * cy - r * r);
+        let x3 = line2[0].x, y3 = line2[0].y;
+        let x4 = line2[1].x, y4 = line2[1].y;
 
-        const discriminant = b * b - 4 * a * c;
+        // Calculate the denominators
+        let denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
 
-        if (discriminant < 0) {
-            return []; // No intersection
+        if (denom === 0) {
+            return null;  // Lines are parallel or coincident
         }
 
-        const x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
-        const y1 = (-A * x1 - C) / B;
+        // Calculate the intersection point
+        let px = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / denom;
+        let py = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / denom;
 
-        const x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
-        const y2 = (-A * x2 - C) / B;
-
-        return [{ x: x1, y: y1 }, { x: x2, y: y2 }];
+        return { x: px, y: py };
     }
 
-    function linesIntersect(line1, line2) {//here is for regLine and userLine extended at the circle
-        const x1=line1[0]['x'], y1=line1[0]['y'], x2=line1[1]['x'], y2=line1[1]['y'];
-        const x3=line2[0]['x'], y3=line2[0]['y'], x4=line2[1]['x'], y4=line2[1]['y'];
+    function getAngle(points) {
+        let A = { x: points[0].x, y: points[0].y };
+        let O = { x: points[1].x, y: points[1].y };
+        let B = { x: points[2].x, y: points[2].y };
 
-        const denominator = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
-        if (denominator === 0) {
-            return false; // Lines are parallel
-        }
+        // Vectors OA and OB
+        let OA = { x: A.x - O.x, y: A.y - O.y };
+        let OB = { x: B.x - O.x, y: B.y - O.y };
 
-        const ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denominator;
-        const ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denominator;
+        // Dot product of OA and OB
+        let dot_product = OA.x * OB.x + OA.y * OB.y;
 
-        if (ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1) {
-            const intersectionX = x1 + ua * (x2 - x1);
-            const intersectionY = y1 + ua * (y2 - y1);
-            return { x: intersectionX, y: intersectionY };
-        }
+        // Magnitudes of OA and OB
+        let magnitude_OA = Math.sqrt(OA.x * OA.x + OA.y * OA.y);
+        let magnitude_OB = Math.sqrt(OB.x * OB.x + OB.y * OB.y);
 
-        return null;
+        // Cosine of the angle
+        let cos_theta = dot_product / (magnitude_OA * magnitude_OB);
+
+        // Angle in radians
+        let angle_radians = Math.acos(cos_theta);
+
+        // Convert to degrees
+        let angle_degrees = angle_radians * (180 / Math.PI);
+
+        return angle_degrees;
     }
 
-    function calAngle(x0, y0, x1, y1, x2, y2) {
-        const vector1 = { x: x1 - x0, y: y1 - y0 };
-        const vector2 = { x: x2 - x0, y: y2 - y0 };
+    function minorSeg(points, radius) {
+        let A = { x: points[0].x, y: points[0].y };
+        let O = { x: points[1].x, y: points[1].y };
+        let B = { x: points[2].x, y: points[2].y };
 
-        const dotProduct = vector1.x * vector2.x + vector1.y * vector2.y;
-        const magnitude1 = Math.sqrt(vector1.x * vector1.x + vector1.y * vector1.y);
-        const magnitude2 = Math.sqrt(vector2.x * vector2.x + vector2.y * vector2.y);
+        // Vectors OA and OB
+        let OA = { x: A.x - O.x, y: A.y - O.y };
+        let OB = { x: B.x - O.x, y: B.y - O.y };
 
-        const cosTheta = dotProduct / (magnitude1 * magnitude2);
-        const theta = Math.acos(cosTheta);
+        // Dot product of OA and OB
+        let dot_product = OA.x * OB.x + OA.y * OB.y;
 
-        return theta; // Angle in radians
-    }
+        // Magnitudes of OA and OB
+        let magnitude_OA = Math.sqrt(OA.x * OA.x + OA.y * OA.y);
+        let magnitude_OB = Math.sqrt(OB.x * OB.x + OB.y * OB.y);
 
-    function minorSegArea(x1, y1, x0, y0, x2, y2){
-        // Calculate the radius
-        const r = radius;
+        // Cosine of the angle
+        let cos_theta = dot_product / (magnitude_OA * magnitude_OB);
 
-        // Calculate the angle θ in radians
-        const cosTheta = ((x1 - x0) * (x2 - x0) + (y1 - y0) * (y2 - y0)) / (r ** 2);
-        const theta = Math.acos(cosTheta);
+        // Angle in radians
+        let angle_radians = Math.acos(cos_theta);
 
         // Calculate the area of the sector
-        const sectorArea = 0.5 * r ** 2 * theta;
+        let sector_area = 0.5 * radius * radius * angle_radians;
 
         // Calculate the area of the triangle
-        const triangleArea = 0.5 * Math.abs(x1 * (y2 - y0) + x2 * (y0 - y1) + x0 * (y1 - y2));
+        let triangle_area = 0.5 * radius * radius * Math.sin(angle_radians);
 
         // Calculate the area of the minor segment
-        const minorSegmentArea = sectorArea - triangleArea;
+        let minor_segment_area = sector_area - triangle_area;
 
-        return minorSegmentArea;
+        return minor_segment_area;
     }
 
     function polygonArea(points) {
         let area = 0;
         for (let i = 0; i < points.length; i++) {
-            const j = (i + 1) % points.length;
+            let j = (i + 1) % points.length;
             area += points[i].x * points[j].y - points[j].x * points[i].y;
         }
         return Math.abs(area / 2);
     }
 
-    const x0 = centroid.x+60,y0=centroid.y+10;// hard coded left and top padding.
-    const circle ={x0,y0,radius};
+    try {
+        // This part is a transformation to correct the coordinates into a sample coordinate system
+        // Given my coordinates are from two sources: data scaling from d3, and user drawing on svg
+        // the numbers are hard-coded, referenced from the system configuration
+        // There is also a separate 'SanityCheck' notebook to visualize the coordinates (after the transition)
+        let u_line = userLine,r_line=regLine;
+        let _centroid = {};
+        _centroid.x = centroid.x * 500 / 510;
+        _centroid.y = 500 - centroid.y;
 
-    const L_u = getCircleLineIntersections(circle,userLine);
-    if(L_u.length==0){
-        return 0;
-    }else{
-        const L_r = getCircleLineIntersections(circle,regLine);
-        const intersect = linesIntersect(L_u,L_r);
-        if(intersect){//if there is intersect, calculate two acute angle piece
-            let x1=L_u[0].x,y1=L_u[0].y;
-            let x2=L_u[1].x,y2=L_u[1].y;
-            let x3=L_r[0].x,y3=L_r[0].y;
-            let x4=L_r[1].x,y4=L_r[1].y;
-            let xi=intersect.x,yi=intersect.y;
-            let res=0;
-            if(calAngle(x0,y0,x1,y1,x3,y3)<Math.PI/2){
-                res = polygonArea([{x:xi,y:yi}, {x:x1, y:y1}, {x:x3, y:y3}])+polygonArea([{x:xi,y:yi}, {x:x2, y:y2}, {x:x4, y:y4}]);
-                res+=minorSegArea(x1,y1,x0,y0,x3,y3);
-                res+=minorSegArea(x2,y2,x0,y0,x4,y4);
-            }else{
-                res = polygonArea([{x:xi,y:yi}, {x:x1, y:y1}, {x:x4, y:y4}])+polygonArea([{x:xi,y:yi}, {x:x2, y:y2}, {x:x3, y:y3}]);
-                res+=minorSegArea(x1,y1,x0,y0,x4,y4);
-                res+=minorSegArea(x2,y2,x0,y0,x3,y3);
-            }
-            return res/(Math.PI*radius**2/2);
-        }else{
-            let x1=L_u[0].x,y1=L_u[0].y;
-            let x2=L_u[1].x,y2=L_u[1].y;
+        let _u = [
+            { x: (u_line[0].x - 60) * 500 / 510, y: 500 - (u_line[0].y - 10) },
+            { x: (u_line[1].x - 60) * 500 / 510, y: 500 - (u_line[1].y - 10) }
+        ];
+        let _r = [
+            { x: (r_line[0].x - 60) * 500 / 510, y: 500 - (r_line[0].y - 10) },
+            { x: (r_line[1].x - 60) * 500 / 510, y: 500 - (r_line[1].y - 10) }
+        ];
 
-            const msA = minorSegArea(x1,y1,x0,y0,x2,y2)
-            return msA/(Math.PI*radius**2/2);
+        // Extend both userLine and regLine to the circle
+        let uline = ex2circle(_u, _centroid, radius);
+
+        if (!uline) {
+            return 0;
         }
+        let rline = ex2circle(_r, _centroid, radius);
+
+        // Get the intersection of two chords
+        let intersection = get_line_intersection(uline, rline);
+        if ((intersection.x - _centroid.x) ** 2 + (intersection.y - _centroid.y) ** 2 <= radius ** 2) {
+            // Check if the intersection is within the circle
+            // then it is the two polygons formed by rline and uline plus the two minor segments
+            let angle = getAngle([
+                { x: uline[0].x, y: uline[0].y },
+                { x: intersection.x, y: intersection.y },
+                { x: rline[0].x, y: rline[0].y }
+            ]);
+            let area = 0;
+            if (angle < 90) {
+                area += polygonArea([
+                    { x: uline[0].x, y: uline[0].y },
+                    { x: intersection.x, y: intersection.y },
+                    { x: rline[0].x, y: rline[0].y }
+                ]);
+
+                area += polygonArea([
+                    { x: uline[1].x, y: uline[1].y },
+                    { x: intersection.x, y: intersection.y },
+                    { x: rline[1].x, y: rline[1].y }
+                ]);
+
+                area += minorSeg([
+                    { x: uline[0].x, y: uline[0].y },
+                    { x: _centroid.x, y: _centroid.y },
+                    { x: rline[0].x, y: rline[0].y }
+                ], radius);
+
+                area += minorSeg([
+                    { x: uline[1].x, y: uline[1].y },
+                    { x: _centroid.x, y: _centroid.y },
+                    { x: rline[1].x, y: rline[1].y }
+                ], radius);
+            } else {
+                area += polygonArea([
+                    { x: uline[0].x, y: uline[0].y },
+                    { x: intersection.x, y: intersection.y },
+                    { x: rline[1].x, y: rline[1].y }
+                ]);
+
+                area += polygonArea([
+                    { x: uline[1].x, y: uline[1].y },
+                    { x: intersection.x, y: intersection.y },
+                    { x: rline[0].x, y: rline[0].y }
+                ]);
+
+                area += minorSeg([
+                    { x: uline[0].x, y: uline[0].y },
+                    { x: _centroid.x, y: _centroid.y },
+                    { x: rline[1].x, y: rline[1].y }
+                ], radius);
+
+                area += minorSeg([
+                    { x: uline[1].x, y: uline[1].y },
+                    { x: _centroid.x, y: _centroid.y },
+                    { x: rline[0].x, y: rline[0].y }
+                ], radius);
+            }
+
+            let res = 1 - 2 * area / (Math.PI * radius ** 2);
+            return Math.round(res * 100) / 100;
+        } else { // then it is the minor segments formed by uline
+            let area = minorSeg([
+                { x: uline[0].x, y: uline[0].y },
+                { x: _centroid.x, y: _centroid.y },
+                { x: uline[1].x, y: uline[1].y }
+            ], radius);
+            let res = 2 * area / (Math.PI * radius ** 2);
+            return Math.round(res * 100) / 100;
+        }
+    } catch (e) {
+        return null;
     }
 }
 
@@ -685,11 +788,12 @@ function drawCILine(_d){
 
 //Button function to add more data to the scatterplot
 $("#add-more-btn").click(function(){
+    $("#draw-line-btn").prop('disabled',false);
     $("#notification").text("Once you believed you've seen enough data, click on \"Draw the line\" to draw the trend")
-    if(reward >=0){
-        reward -=2;
+    if(reward >=10){
+        reward -=1.5;
     }else{
-        reward = 0;
+        reward = 10;
     }
     d_total += d_reveal;
     updateChart(_d,d_total);
@@ -759,8 +863,8 @@ $("#submit-result-btn" ).click(function() {
         userBehaviour.stop();
 
  //       let accuracy2 = parseFloat(fScore(userLineData,regLineData,d_svg));
-        let accuracy3 = parseFloat(cScore(userLineData,regLineData,visCentroid,width/2));
-        let accuracy = parseFloat(userScore(userLineData, regLineData));
+        let accuracy = parseFloat(cScore(userLineData,regLineData,visCentroid,width/2));
+        // let accuracy = parseFloat(userScore(userLineData, regLineData));
         let final_res = (reward*accuracy).toFixed(1);
         let money = final_res*0.6/100
         money = Number(money.toFixed(2))
@@ -833,6 +937,7 @@ $(document).ready(function(){
     $("#slider-control").hide();//pause the slider as we don't use it in our tasks.
     $("#add-more-btn").show();
     $("#draw-line-btn").show();
+    $("#draw-line-btn").prop('disabled',true);
     $("#submit-result-btn").hide();
     $("#next-btn").hide();
     userBehaviour.config(
